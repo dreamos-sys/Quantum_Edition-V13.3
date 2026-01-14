@@ -1130,7 +1130,7 @@ console.log("🛰️ System Connected to: vgfzy...supabase.co");
             { id: 3, emoji: "👮", title: "LAPORAN SEKURITI", desc: "Petugas 3 orang • Shift Pagi/Malam<br>Excel export ready", access: ["security", "admin"], form: "security" },
             { id: 4, emoji: "👑", title: "ADMIN PANEL", desc: "Akses penuh sistem<br>Device fingerprint<br>Supabase management", access: ["admin"], form: "admin" },
             { id: 5, emoji: "🧹", title: "JANITOR / CS", desc: "Ceklis harian 11 area<br>Monitoring kebersihan", access: ["cs", "admin"], form: "cs" },
-            { id: 6, emoji: "🔧", title: "MAINTENANCE", desc: "Perbaikan sarana<br>Status tracking<br>QR code scanner", access: ["maintenance", "admin"], form: "maintenance" },
+            { id: 6, emoji: "🔧", title: "MAINTENANCE", desc: "Perbaikan sarana<br>Status tracking<br>QR code scanner",nance", "admin"], form: "maintenance" },
             { id: 7, emoji: "📦", title: "STOK CS", desc: "Stok & tools kebersihan<br>Chemical & pupuk inventory", access: ["stock", "inventory", "warehouse", "admin"], form: "stock" }
         ];
 
@@ -1167,14 +1167,38 @@ console.log("🛰️ System Connected to: vgfzy...supabase.co");
             }
         }
 
-         // ============================================================
-// MASTER AUTHENTICATION SYSTEM (Dream OS v13.4 Quantum - Destructive Edition)
+                  // ============================================================
+// MASTER AUTHENTICATION SYSTEM (Dream OS v13.4 Quantum - Full Secured)
 // ============================================================
 
 let failedAttempts = 0;
 let isLocked = false;
 
-// 1. MASTER LOGIN ENGINE
+// 1. FUNGSI TOGGLE SECRET ROLES (Show/Hide Password Role)
+function toggleSecretRoles() {
+    const box = document.getElementById('roleHintBox');
+    const eye = document.getElementById('eye-icon');
+
+    if (box.style.display === 'none') {
+        // Minta PIN Architect (PIN: 234) sesuai instruksi My Bro
+        const access = prompt("🔐 Architect Authentication Required:");
+        if (access === "234") {
+            box.style.display = 'block';
+            eye.innerText = "👁️‍🗨️";
+            eye.style.opacity = "1";
+            showNotification("🔓 Master Roles Database Unlocked", "warning");
+        } else {
+            alert("❌ ACCESS DENIED! Unauthorized attempt recorded.");
+            logToGhost('SECURITY', 'Unauthorized attempt to view Master List', 'WARNING');
+        }
+    } else {
+        box.style.display = 'none';
+        eye.innerText = "👁️";
+        eye.style.opacity = "0.4";
+    }
+}
+
+// 2. MASTER LOGIN ENGINE
 function handleLogin(autoPass = null) {
     if (isLocked) {
         showNotification('⚠️ SYSTEM LOCKED: Protokol Keamanan ISO Aktif', 'error');
@@ -1198,14 +1222,14 @@ function handleLogin(autoPass = null) {
         logToGhost('AUTH_FAIL', `Unauthorized Attempt #${failedAttempts}`, 'BLOCKED');
         
         if (failedAttempts >= 3) {
-            triggerDestructiveProtocol(); // Ganti lockout biasa jadi Protokol Destruktif
+            triggerDestructiveProtocol();
         } else {
             showNotification(`❌ Akses Ditolak! Sisa percobaan: ${3 - failedAttempts}`, 'error');
         }
     }
 }
 
-// 2. FINGERPRINT LISTENING (REDMI NOTE 9 PRO EXCLUSIVE)
+// 3. FINGERPRINT LISTENING (REDMI NOTE 9 PRO EXCLUSIVE)
 function simulateFingerprint() {
     const status = document.getElementById('finger-status');
     if (status) {
@@ -1224,13 +1248,13 @@ function simulateFingerprint() {
     }, 1500);
 }
 
-// 3. LOGIN SUCCESS PROTOCOL
+// 4. LOGIN SUCCESS PROTOCOL
 function loginSuccess(userInfo) {
     currentUser = userInfo.name;
     currentRole = userInfo.role;
     
     localStorage.setItem('dreamos_user', JSON.stringify(userInfo));
-    localStorage.setItem('last_master_sync', Date.now()); // Simpan waktu login terakhir
+    localStorage.setItem('last_master_sync', Date.now());
 
     document.getElementById('login-overlay').style.opacity = '0';
     setTimeout(() => {
@@ -1257,35 +1281,36 @@ function loginSuccess(userInfo) {
     }, 500);
 }
 
-// 4. PROTOKOL DESTRUKTIF (FAKE FACTORY RESET)
+// 5. PROTOKOL DESTRUKTIF (FAKE FACTORY RESET)
 function triggerDestructiveProtocol() {
     isLocked = true;
     const loginBox = document.querySelector('.login-box');
+    logToGhost('SECURITY', 'FACTORY RESET TRIGGERED', 'CRITICAL');
     
-    // Kirim Signal via Log ke Ghost (Supaya My Bro tau lewat Cloud)
-    logToGhost('SECURITY', 'FACTORY RESET TRIGGERED - Unauthorized Access', 'CRITICAL');
-    
-    // Ganti Tampilan jadi Layar Hitam Factory Reset (Pura-pura)
     loginBox.innerHTML = `
-        <div style="background: #000; color: white; height: 100%; padding: 20px; font-family: monospace; text-align: left;">
-            <p>> SYSTEM_ERROR: SECURITY_BREACH_DETECTED</p>
+        <div style="background: #000; color: #fff; height: 100%; padding: 20px; font-family: monospace; text-align: left; border-radius: 15px;">
+            <p style="color: #0f0;">> [RECOVERY_MODE ACTIVE]</p>
             <p>> INITIATING ISO_AUTO_DESTRUCT...</p>
-            <p>> WIPING ALL DATA ON REDMI NOTE 9 PRO...</p>
-            <div id="progress-bar" style="width: 0%; height: 5px; background: white; margin: 20px 0;"></div>
+            <p>> WIPING DATA ON REDMI NOTE 9 PRO...</p>
+            <div style="width: 100%; height: 5px; background: #333; margin: 15px 0;">
+                <div id="progress-bar" style="width: 0%; height: 100%; background: #fff;"></div>
+            </div>
             <p id="wipe-status" style="color: red;">[ 0% COMPLETED ]</p>
+            <p style="font-size: 0.6rem; margin-top: 20px; opacity: 0.5;">DO NOT TURN OFF TARGET DEVICE</p>
         </div>
     `;
 
     let progress = 0;
     const interval = setInterval(() => {
         progress += 2;
-        document.getElementById('progress-bar').style.width = progress + '%';
-        document.getElementById('wipe-status').innerText = `[ ${progress}% COMPLETED ]`;
+        const bar = document.getElementById('progress-bar');
+        const stat = document.getElementById('wipe-status');
+        if(bar) bar.style.width = progress + '%';
+        if(stat) stat.innerText = `[ ${progress}% COMPLETED ]`;
         
         if (progress >= 100) {
             clearInterval(interval);
-            document.getElementById('wipe-status').innerText = "SYSTEM WIPED. DEVICE LOCKED.";
-            // Setelah 5 menit baru bisa refresh (Lockout asli)
+            if(stat) stat.innerText = "SYSTEM WIPED. DEVICE ENCRYPTED.";
             setTimeout(() => { location.reload(); }, 300000); 
         }
     }, 100);
@@ -1301,7 +1326,6 @@ function logout() {
         location.reload();
     }
 }
-  
 
         // ================= ICON MANAGEMENT =================
         function unlockIconsForRole(role) {
