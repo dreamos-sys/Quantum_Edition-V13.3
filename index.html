@@ -1327,63 +1327,58 @@ function logout() {
     }
 }
 
-        // ================= ICON MANAGEMENT =================
-        function unlockIconsForRole(role) {
-            const iconGrid = document.getElementById('iconGrid');
-            iconGrid.innerHTML = '';
-            
-            ICON_CONFIG.forEach(icon => {
-                const hasAccess = icon.access.includes(role);
-                const iconCard = document.createElement('div');
-                iconCard.className = `icon-card ${hasAccess ? 'unlocked' : 'locked'}`;
-                iconCard.onclick = hasAccess ? () => openForm(icon.form) : null;
-                
-                iconCard.innerHTML = `
-                    <div class="access-badge">${hasAccess ? '🔓' : '🔒'}</div>
-                    <span class="icon-emoji">${icon.emoji}</span>
-                    <div class="icon-title">${icon.title}</div>
-                    <div class="icon-desc">${icon.desc}</div>
-                `;
-                
-                iconGrid.appendChild(iconCard);
-            });
-        }
+        // ============================================================
+// ICON MANAGEMENT SYSTEM (Quantum Security Interface)
+// ============================================================
 
-        // ================= FORM MANAGEMENT =================
-        function openForm(formType) {
-            let formHTML = '';
-            
-            switch(formType) {
-                case 'booking':
-                    formHTML = getBookingForm();
-                    break;
-                case 'k3':
-                    formHTML = getK3Form();
-                    break;
-                case 'security':
-                    formHTML = getSecurityForm();
-                    break;
-                case 'admin':
-                    formHTML = getAdminForm();
-                    break;
-                case 'cs':
-                    formHTML = getCSForm();
-                    break;
-                case 'maintenance':
-                    formHTML = getMaintenanceForm();
-                    break;
-                case 'stock':
-                    formHTML = getStockForm();
-                    break;
-            }
-            
-            document.getElementById('formContainer').innerHTML = formHTML;
-            document.getElementById('formModal').classList.add('active');
-        }
+function unlockIconsForRole(role) {
+    const iconGrid = document.getElementById('iconGrid');
+    if (!iconGrid) return;
 
-        function closeModal() {
-            document.getElementById('formModal').classList.remove('active');
-        }
+    iconGrid.innerHTML = ''; // Clear grid for re-rendering
+    
+    ICON_CONFIG.forEach(icon => {
+        // Cek akses berdasarkan role (Admin Master punya kunci segalanya)
+        const hasAccess = icon.access.includes(role) || role === 'admin';
+        
+        const iconCard = document.createElement('div');
+        
+        // Quantum Class Assignment
+        iconCard.className = `icon-card ${hasAccess ? 'unlocked' : 'locked'} pulse-on-load`;
+        
+        // Logika Klik: Kalau ada akses buka form, kalau tidak kasih peringatan ISO
+        iconCard.onclick = hasAccess ? () => {
+            // Haptic Feedback Simulation
+            showNotification(`📂 Opening ${icon.title}...`, 'info');
+            openForm(icon.form);
+        } : () => {
+            showNotification(`🔒 Access Denied: Authorized Only!`, 'error');
+            logToGhost('SECURITY', `Unauthorized access attempt to ${icon.title}`, 'WARNING');
+        };
+        
+        // Render Card Content dengan Standar ISO
+        iconCard.innerHTML = `
+            <div class="access-badge" style="background: ${hasAccess ? 'var(--success)' : 'var(--danger)'}">
+                ${hasAccess ? '🔓' : '🔒'}
+            </div>
+            <span class="icon-emoji" style="filter: ${hasAccess ? 'none' : 'grayscale(100%) blur(1px)'}">
+                ${icon.emoji}
+            </span>
+            <div class="icon-title" style="color: ${hasAccess ? 'var(--gold)' : '#666'}">
+                ${icon.title}
+            </div>
+            <div class="icon-desc" style="opacity: ${hasAccess ? '0.8' : '0.4'}">
+                ${icon.desc}
+            </div>
+        `;
+        
+        iconGrid.appendChild(iconCard);
+    });
+
+    // Logging for Bapak Hanung & Bapak Erwin
+    console.log(`🛰️ Icons Synchronized for Role: ${role.toUpperCase()}`);
+}
+
 
         // ================= FORM TEMPLATES =================
         function getBookingForm() {
