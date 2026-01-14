@@ -938,55 +938,56 @@
     </header>
 
     <!-- INFO MARQUEE BAR -->
-    <div class="info-bar">
-        <marquee id="liveInfo">
-            📢 Welcome to DREAM OS v13.4 | GPS: Tracking Active | Security: Gate Utama & Masjid Secured | Inventory: Real-time Sync | ISO High Risk: Compliant
+        <div class="info-bar" style="background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--emerald); padding: 5px 0;">
+        <marquee id="liveInfo" style="color: var(--emerald); font-size: 0.8rem; font-weight: bold;">
+            📢 Welcome to DREAM OS v13.4 Master Configuration | ISO Standard: 2026 Compliant | System Operator: Master M 😎 | Status: GPS Tracking & Security Cloud Active | The Power Soul Of Shalawat
         </marquee>
     </div>
 
-    <!-- LOGIN OVERLAY -->
     <div id="login-overlay">
-        <div class="login-box">
+        <div class="login-box" style="position: relative; overflow: hidden;">
             <span class="login-icon">🧬</span>
-            <h2 style="color: var(--gold); margin-bottom: 10px;">SMART BIOMETRIC ACCESS</h2>
-            <p style="color: rgba(255,255,255,0.7); margin-bottom: 30px;">
-                Gunakan Fingerprint Redmi Note 9 Pro atau Password Role
+            <h2 style="color: var(--gold); margin-bottom: 10px; font-family: 'Amiri', serif;">SMART BIOMETRIC ACCESS</h2>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 25px;">
+                Verified Fingerprint Redmi Note 9 Pro atau Master Key
             </p>
             
-            <div class="fingerprint-btn" onclick="simulateFingerprint()">
+            <div class="fingerprint-btn" onclick="simulateFingerprint()" style="cursor: pointer; transition: 0.3s;">
                 👆
             </div>
-            <div style="font-size: 0.9rem; color: var(--emerald); margin: 10px 0;">
-                Tap untuk Fingerprint Detection
+            <div id="finger-status" style="font-size: 0.8rem; color: var(--emerald); margin: 10px 0; font-weight: bold;">
+                [ SCANNER READY: Listening Mode ]
             </div>
             
             <input type="password" class="pass-input" id="passInput" 
-                   placeholder="Masukkan Password Role..." 
-                   onkeypress="handleEnterKey(event)">
+                   placeholder="Enter Authorized Password..." 
+                   onkeypress="handleEnterKey(event)"
+                   style="text-align: center; letter-spacing: 5px;">
             
-            <button class="login-btn" onclick="handleLogin()">
-                🔓 MASUK SISTEM
+            <button class="login-btn" onclick="handleLogin()" style="margin-top: 15px;">
+                🔓 ACTIVATE SYSTEM
             </button>
+
+            <div style="margin-top: 20px;">
+                <span id="eye-icon" onclick="toggleSecretRoles()" style="cursor: pointer; font-size: 1.4rem; opacity: 0.4;">👁️</span>
+            </div>
             
-            <div class="role-hint">
-                <strong>💡 Password Role:</strong>
-                <ul>
-                    <li>User Umum: <code>user_@1234</code></li>
-                    <li>Security Piket: <code>LHPSsec_AF2025</code></li>
-                    <li>Admin Master: <code>4dm1n_AF6969@00</code></li>
-                    <li>Janitor CS: <code>CHCS_AF_@003</code></li>
-                    <li>Maintenance: <code>M41n_4F@234</code></li>
-                    <li>Stok Chemical: <code>SACS_AF@004</code></li>
-                    <li>Inventaris: <code>4dm1n_6969@01</code></li>
-                    <li>Gudang Pupuk: <code>4dm1n_9696@02</code></li>
+            <div id="roleHintBox" style="display: none; margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: left; border: 1px solid rgba(255,215,0,0.2);">
+                <strong style="color: var(--gold); font-size: 0.75rem;">💡 AUTHORIZED DATABASE:</strong>
+                <ul style="font-size: 0.7rem; color: #ddd; margin-top: 5px; list-style: none;">
+                    <li>🔹 User: <code>user_@1234</code></li>
+                    <li>🔹 Security: <code>LHPSsec_AF2025</code></li>
+                    <li>🔹 Admin: <code>4dm1n_AF6969@00</code></li>
+                    <li>🔹 Janitor: <code>CHCS_AF_@003</code></li>
+                    <li>🔹 Maintenance: <code>M41n_4F@234</code></li>
+                    <li>🔹 Gudang: <code>4dm1n_9696@02</code></li>
                 </ul>
             </div>
             
-            <!-- GHOST MODE ACCESS -->
-            <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 10px; border: 1px dashed rgba(139, 92, 246, 0.3);">
-                <div style="color: #8b5cf6; font-size: 0.9rem; font-weight: bold; margin-bottom: 10px;">👻 Architect Ghost Mode</div>
-                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">
-                    Access: Long Press Bismillah 5 detik + PIN 234
+            <div id="ghost-trigger-area" style="margin-top: 25px; padding: 10px; border-top: 1px solid rgba(139, 92, 246, 0.2);">
+                <div style="color: #8b5cf6; font-size: 0.75rem; font-weight: bold; letter-spacing: 2px;">GHOST MODE ENCRYPTED</div>
+                <div id="ghost-status-text" style="font-size: 0.65rem; color: rgba(255,255,255,0.3); margin-top: 5px;">
+                    Protected by ISO Auto-Destruct Protocol
                 </div>
             </div>
         </div>
