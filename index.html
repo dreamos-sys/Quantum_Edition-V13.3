@@ -1037,15 +1037,23 @@
 
     <script>
         // ================= SUPABASE CONFIGURATION =================
-        const SUPABASE_URL = 'https://xxxxxxxxxxxxxxxx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxxxxxxxxxxxxxx';
-        
-        let supabaseClient = null;
-        let currentUser = null;
-        let currentRole = null;
-        let unlockedIcons = [];
-        let ghostLogs = [];
-        let qrScanner = null;
+// Menggunakan Akun: teknisi@alfikri.sch.id
+const SUPABASE_URL = 'https://vgfzyuswsjrjmtbwrvpc.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_8NCt0x0tcs-_czAQwuB9SA_kPvDeOUl';
+
+// Inisialisasi Engine (Gunakan _db agar sinkron dengan fungsi Submit)
+const _db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// State Management System
+let currentUser = "Master M 😎";
+let currentRole = "Administrator";
+let unlockedIcons = ['Security', 'Janitor', 'Technician'];
+let ghostLogs = [];
+let qrScanner = null;
+
+// Test Koneksi Silent
+console.log("🛰️ System Connected to: vgfzy...supabase.co");
+
 
         // ================= USER PASSWORD SYSTEM =================
         const USER_PASSWORDS = {
