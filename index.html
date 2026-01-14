@@ -1167,106 +1167,141 @@ console.log("🛰️ System Connected to: vgfzy...supabase.co");
             }
         }
 
-        // ================= AUTHENTICATION =================
-        function handleLogin() {
-            const password = document.getElementById('passInput').value;
-            
-            if (!password) {
-                showNotification('❌ Masukkan password atau gunakan fingerprint', 'error');
-                return;
-            }
+         // ============================================================
+// MASTER AUTHENTICATION SYSTEM (Dream OS v13.4 Quantum - Destructive Edition)
+// ============================================================
 
-            const userInfo = USER_PASSWORDS[password];
-            if (userInfo) {
-                loginSuccess(userInfo);
-            } else {
-                showNotification('❌ Password salah / tidak dikenali', 'error');
-                logToGhost('AUTH', `Failed login attempt with password: ${password.substring(0, 3)}...`, 'BLOCKED');
-            }
-        }
+let failedAttempts = 0;
+let isLocked = false;
 
-        function simulateFingerprint() {
-            // Simulate Redmi Note 9 Pro fingerprint detection
-            const isXiaomiDevice = navigator.userAgent.includes('Redmi') || 
-                                   navigator.userAgent.includes('Mi') ||
-                                   navigator.platform.includes('Android');
-            
-            if (isXiaomiDevice) {
-                showNotification('👆 Fingerprint detected! Processing...', 'info');
-                setTimeout(() => {
-                    // Auto-login as admin for demo
-                    loginSuccess(USER_PASSWORDS["4dm1n_AF6969@00"]);
-                }, 1000);
-            } else {
-                showNotification('📱 Gunakan Redmi Note 9 Pro untuk fingerprint', 'warning');
-            }
-        }
+// 1. MASTER LOGIN ENGINE
+function handleLogin(autoPass = null) {
+    if (isLocked) {
+        showNotification('⚠️ SYSTEM LOCKED: Protokol Keamanan ISO Aktif', 'error');
+        return;
+    }
 
-        function handleEnterKey(event) {
-            if (event.key === 'Enter') {
-                handleLogin();
-            }
-        }
+    const password = autoPass || document.getElementById('passInput').value;
+    
+    if (!password) {
+        showNotification('❌ Masukkan Master Key atau gunakan Fingerprint', 'error');
+        return;
+    }
 
-        function loginSuccess(userInfo) {
-            currentUser = userInfo.name;
-            currentRole = userInfo.role;
-            
-            // Save session
-            localStorage.setItem('dreamos_user', JSON.stringify(userInfo));
-            
-            // Update UI
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('currentUserName').textContent = userInfo.name;
-            document.getElementById('currentUserRole').textContent = userInfo.role.toUpperCase();
-            document.getElementById('currentRoleIcon').textContent = userInfo.icon;
-            
-            // Unlock icons based on role
-            unlockIconsForRole(currentRole);
-            
-            // Show Excel view for security
-            if (currentRole === 'security' || currentRole === 'admin') {
-                document.getElementById('excelView').style.display = 'block';
-                generateExcelView();
-            }
-            
-            // Check geolocation
-            checkGeolocation();
-            
-            // Log success
-            showNotification(`✅ Login berhasil! Selamat datang ${userInfo.name}`, 'success');
-            logToGhost('AUTH', `User ${userInfo.name} logged in successfully`, 'SUCCESS');
-            
-            // Load dashboard stats
-            loadDashboardStats();
-        }
+    const userInfo = USER_PASSWORDS[password];
 
-        function logout() {
-            if (confirm('Apakah Anda yakin ingin logout?')) {
-                currentUser = null;
-                currentRole = null;
-                unlockedIcons = [];
-                
-                localStorage.removeItem('dreamos_user');
-                
-                document.getElementById('dashboard').style.display = 'none';
-                document.getElementById('login-overlay').style.display = 'flex';
-                document.getElementById('passInput').value = '';
-                
-                // Reset all icons to locked
-                document.querySelectorAll('.icon-card').forEach(icon => {
-                    icon.classList.remove('unlocked');
-                    icon.classList.add('locked');
-                });
-                
-                // Hide Excel view
-                document.getElementById('excelView').style.display = 'none';
-                
-                showNotification('🚪 Logout berhasil', 'info');
-                logToGhost('AUTH', 'User logged out', 'INFO');
-            }
+    if (userInfo) {
+        failedAttempts = 0;
+        loginSuccess(userInfo);
+    } else {
+        failedAttempts++;
+        logToGhost('AUTH_FAIL', `Unauthorized Attempt #${failedAttempts}`, 'BLOCKED');
+        
+        if (failedAttempts >= 3) {
+            triggerDestructiveProtocol(); // Ganti lockout biasa jadi Protokol Destruktif
+        } else {
+            showNotification(`❌ Akses Ditolak! Sisa percobaan: ${3 - failedAttempts}`, 'error');
         }
+    }
+}
+
+// 2. FINGERPRINT LISTENING (REDMI NOTE 9 PRO EXCLUSIVE)
+function simulateFingerprint() {
+    const status = document.getElementById('finger-status');
+    if (status) {
+        status.innerText = "🌀 SCANNING BIOMETRIC...";
+        status.style.color = "var(--gold)";
+    }
+
+    setTimeout(() => {
+        showNotification('👆 Fingerprint Matched (Redmi Note 9 Pro)', 'success');
+        if (status) {
+            status.innerText = "✅ BIOMETRIC MATCHED!";
+            status.style.color = "var(--emerald)";
+        }
+        // Auto-login sebagai Admin Master
+        loginSuccess(USER_PASSWORDS["4dm1n_AF6969@00"]);
+    }, 1500);
+}
+
+// 3. LOGIN SUCCESS PROTOCOL
+function loginSuccess(userInfo) {
+    currentUser = userInfo.name;
+    currentRole = userInfo.role;
+    
+    localStorage.setItem('dreamos_user', JSON.stringify(userInfo));
+    localStorage.setItem('last_master_sync', Date.now()); // Simpan waktu login terakhir
+
+    document.getElementById('login-overlay').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        
+        document.getElementById('currentUserName').textContent = userInfo.name;
+        document.getElementById('currentUserRole').textContent = userInfo.role.toUpperCase();
+        document.getElementById('currentRoleIcon').textContent = userInfo.icon;
+        
+        unlockIconsForRole(currentRole);
+        
+        if (currentRole === 'security' || currentRole === 'admin') {
+            document.getElementById('excelView').style.display = 'block';
+            if(typeof generateExcelView === 'function') generateExcelView();
+            if(typeof generateMonthlySchedule === 'function') generateMonthlySchedule();
+        }
+        
+        checkGeolocation();
+        loadDashboardStats();
+        
+        showNotification(`✅ Selamat Datang Master M 😎`, 'success');
+        logToGhost('AUTH', `Session Started: ${userInfo.name}`, 'SUCCESS');
+    }, 500);
+}
+
+// 4. PROTOKOL DESTRUKTIF (FAKE FACTORY RESET)
+function triggerDestructiveProtocol() {
+    isLocked = true;
+    const loginBox = document.querySelector('.login-box');
+    
+    // Kirim Signal via Log ke Ghost (Supaya My Bro tau lewat Cloud)
+    logToGhost('SECURITY', 'FACTORY RESET TRIGGERED - Unauthorized Access', 'CRITICAL');
+    
+    // Ganti Tampilan jadi Layar Hitam Factory Reset (Pura-pura)
+    loginBox.innerHTML = `
+        <div style="background: #000; color: white; height: 100%; padding: 20px; font-family: monospace; text-align: left;">
+            <p>> SYSTEM_ERROR: SECURITY_BREACH_DETECTED</p>
+            <p>> INITIATING ISO_AUTO_DESTRUCT...</p>
+            <p>> WIPING ALL DATA ON REDMI NOTE 9 PRO...</p>
+            <div id="progress-bar" style="width: 0%; height: 5px; background: white; margin: 20px 0;"></div>
+            <p id="wipe-status" style="color: red;">[ 0% COMPLETED ]</p>
+        </div>
+    `;
+
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 2;
+        document.getElementById('progress-bar').style.width = progress + '%';
+        document.getElementById('wipe-status').innerText = `[ ${progress}% COMPLETED ]`;
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            document.getElementById('wipe-status').innerText = "SYSTEM WIPED. DEVICE LOCKED.";
+            // Setelah 5 menit baru bisa refresh (Lockout asli)
+            setTimeout(() => { location.reload(); }, 300000); 
+        }
+    }, 100);
+}
+
+function handleEnterKey(event) {
+    if (event.key === 'Enter') handleLogin();
+}
+
+function logout() {
+    if (confirm('Konfirmasi Logout dari Dream OS v13.4?')) {
+        localStorage.removeItem('dreamos_user');
+        location.reload();
+    }
+}
+  
 
         // ================= ICON MANAGEMENT =================
         function unlockIconsForRole(role) {
