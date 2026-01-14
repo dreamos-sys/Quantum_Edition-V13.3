@@ -1,0 +1,354 @@
+// ================= DREAM OS v13.3.1 SERVICE WORKER =================
+const CACHE_NAME = 'dream-os-v13.3.1-cache';
+const DYNAMIC_CACHE_NAME = 'dream-os-dynamic-v13.3.1-cache';
+const OFFLINE_QUEUE = 'dream-os-offline-queue';
+
+// Assets to cache on install
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js',
+  '/icons/icon-72x72.png',
+  '/icons/icon-96x96.png',
+  '/icons/icon-128x128.png',
+  '/icons/icon-144x144.png',
+  '/icons/icon-152x152.png',
+  '/icons/icon-192x192.png',
+  '/icons/icon-384x384.png',
+  '/icons/icon-512x512.png'
+];
+
+// ================= INSTALL EVENT =================
+self.addEventListener('install', event => {
+  console.log('🔧 Service Worker: Installing...');
+  
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('📦 Caching static assets...');
+        return cache.addAll(STATIC_ASSETS);
+      })
+      .then(() => {
+        console.log('✅ Service Worker installed successfully');
+        return self.skipWaiting();
+      })
+      .catch(error => {
+        console.error('❌ Service Worker installation failed:', error);
+      })
+  );
+});
+
+// ================= ACTIVATE EVENT =================
+self.addEventListener('activate', event => {
+  console.log('🚀 Service Worker: Activating...');
+  
+  event.waitUntil(
+    caches.keys()
+      .then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE_NAME) {
+              console.log('🗑️ Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        console.log('✅ Service Worker activated');
+        return self.clients.claim();
+      })
+  );
+});
+
+// ================= FETCH EVENT =================
+self.addEventListener('fetch', event => {
+  // Skip Supabase requests for real-time updates
+  if (event.request.url.includes('supabase.co')) {
+    return;
+  }
+  
+  // Skip non-GET requests (POST, PUT, DELETE)
+  if (event.request.method !== 'GET') {
+    return;
+  }
+  
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Return cached response if found
+        if (response) {
+          return response;
+        }
+        
+        // Otherwise fetch from network
+        return fetch(event.request)
+          .then(networkResponse => {
+            // Cache the new response for future use
+            return caches.open(DYNAMIC_CACHE_NAME)
+              .then(cache => {
+                cache.put(event.request, networkResponse.clone());
+                return networkResponse;
+              });
+          })
+          .catch(() => {
+            // If network fails and no cache, return offline page
+            if (event.request.headers.get('accept').includes('text/html')) {
+              return caches.match('/index.html');
+            }
+            
+            // For API calls, store in offline queue
+            if (event.request.url.includes('/api/')) {
+              storeOfflineRequest(event.request.clone());
+            }
+            
+            return new Response('Offline', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: new Headers({
+                'Content-Type': 'text/plain'
+              })
+            });
+          });
+      })
+  );
+});
+
+// ================= SYNC EVENT (Background Sync) =================
+self.addEventListener('sync', event => {
+  console.log('🔄 Background Sync:', event.tag);
+  
+  if (event.tag === 'sync-offline-data') {
+    event.waitUntil(syncOfflineData());
+  }
+  
+  if (event.tag === 'sync-supabase-data') {
+    event.waitUntil(syncSupabaseData());
+  }
+});
+
+// ================= PUSH NOTIFICATION =================
+self.addEventListener('push', event => {
+  console.log('📢 Push Notification received:', event);
+  
+  if (!event.data) return;
+  
+  const data = event.data.json();
+  const options = {
+    body: data.body || 'Notification from DREAM OS',
+    icon: '/icons/icon-192x192.png',
+    badge: '/icons/icon-72x72.png',
+    tag: data.tag || 'dream-os-notification',
+    data: data.data || {},
+    actions: data.actions || [],
+    requireInteraction: data.requireInteraction || false,
+    silent: data.silent || false
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'DREAM OS', options)
+  );
+});
+
+// ================= NOTIFICATION CLICK =================
+self.addEventListener('notificationclick', event => {
+  console.log('👆 Notification clicked:', event.notification.tag);
+  
+  event.notification.close();
+  
+  const urlToOpen = event.notification.data.url || '/';
+  
+  event.waitUntil(
+    clients.matchAll({
+      type: 'window',
+      includeUncontrolled: true
+    })
+    .then(clientList => {
+      // Check if there's already a window open
+      for (const client of clientList) {
+        if (client.url === urlToOpen && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      
+      // Open new window if none exists
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
+});
+
+// ================= OFFLINE QUEUE MANAGEMENT =================
+function storeOfflineRequest(request) {
+  return request.text()
+    .then(body => {
+      const offlineRequest = {
+        url: request.url,
+        method: request.method,
+        headers: Object.fromEntries(request.headers.entries()),
+        body: body,
+        timestamp: Date.now(),
+        id: `offline_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      };
+      
+      return caches.open(OFFLINE_QUEUE)
+        .then(cache => {
+          return cache.put(`offline_${offlineRequest.id}`, new Response(JSON.stringify(offlineRequest)));
+        });
+    })
+    .then(() => {
+      // Register background sync
+      if ('sync' in self.registration) {
+        return self.registration.sync.register('sync-supabase-data');
+      }
+    });
+}
+
+async function syncOfflineData() {
+  console.log('🔄 Syncing offline data...');
+  
+  const cache = await caches.open(OFFLINE_QUEUE);
+  const requests = await cache.keys();
+  
+  for (const request of requests) {
+    try {
+      const response = await cache.match(request);
+      const offlineData = await response.json();
+      
+      // Send to Supabase
+      const supabaseResponse = await fetch(offlineData.url, {
+        method: offlineData.method,
+        headers: offlineData.headers,
+        body: offlineData.body
+      });
+      
+      if (supabaseResponse.ok) {
+        // Remove from queue if successful
+        await cache.delete(request);
+        console.log('✅ Synced offline request:', offlineData.id);
+        
+        // Show notification
+        self.registration.showNotification('DREAM OS', {
+          body: 'Data berhasil disinkronkan dengan Supabase',
+          icon: '/icons/icon-192x192.png',
+          tag: 'sync-success'
+        });
+      }
+    } catch (error) {
+      console.error('❌ Failed to sync offline request:', error);
+    }
+  }
+}
+
+async function syncSupabaseData() {
+  console.log('🔄 Syncing Supabase data...');
+  
+  // Get all pending offline data from IndexedDB/LocalStorage via client
+  const clients = await self.clients.matchAll();
+  
+  for (const client of clients) {
+    client.postMessage({
+      type: 'SYNC_OFFLINE_DATA',
+      payload: { timestamp: Date.now() }
+    });
+  }
+}
+
+// ================= MESSAGE HANDLER =================
+self.addEventListener('message', event => {
+  console.log('📨 Service Worker received message:', event.data);
+  
+  if (event.data.type === 'CACHE_DATA') {
+    // Cache API data for offline use
+    caches.open(DYNAMIC_CACHE_NAME)
+      .then(cache => {
+        const { url, data } = event.data.payload;
+        const response = new Response(JSON.stringify(data), {
+          headers: { 'Content-Type': 'application/json' }
+        });
+        cache.put(url, response);
+      });
+  }
+  
+  if (event.data.type === 'GET_CACHED_DATA') {
+    // Get cached data for client
+    caches.match(event.data.payload.url)
+      .then(response => {
+        if (response) {
+          return response.json();
+        }
+        return null;
+      })
+      .then(data => {
+        event.ports[0].postMessage({
+          type: 'CACHED_DATA_RESPONSE',
+          payload: data
+        });
+      });
+  }
+  
+  if (event.data.type === 'REGISTER_SYNC') {
+    // Register background sync
+    if ('sync' in self.registration) {
+      self.registration.sync.register(event.data.payload.tag || 'sync-offline-data');
+    }
+  }
+});
+
+// ================= PERIODIC SYNC =================
+if ('periodicSync' in self.registration) {
+  self.addEventListener('periodicsync', event => {
+    if (event.tag === 'sync-bookings') {
+      event.waitUntil(syncBookingsData());
+    }
+    
+    if (event.tag === 'sync-reports') {
+      event.waitUntil(syncReportsData());
+    }
+  });
+}
+
+async function syncBookingsData() {
+  console.log('📅 Periodic sync: Bookings');
+  
+  try {
+    // Fetch latest bookings data
+    const response = await fetch('/api/bookings/latest');
+    if (response.ok) {
+      const data = await response.json();
+      
+      // Cache the data
+      const cache = await caches.open(DYNAMIC_CACHE_NAME);
+      await cache.put('/api/bookings/latest', new Response(JSON.stringify(data)));
+      
+      // Notify clients
+      const clients = await self.clients.matchAll();
+      clients.forEach(client => {
+        client.postMessage({
+          type: 'BOOKINGS_UPDATED',
+          payload: data
+        });
+      });
+    }
+  } catch (error) {
+    console.error('Periodic sync failed:', error);
+  }
+}
+
+async function syncReportsData() {
+  console.log('📊 Periodic sync: Reports');
+  
+  try {
+    const response = await fetch('/api/reports/latest');
+    if (response.ok) {
+      const data = await response.json();
+      
+      const cache = await caches.open(DYNAMIC_CACHE_NAME);
+      await cache.put('/api/reports/latest', new Response(JSON.stringify(data)));
+    }
+  } catch (error) {
+    console.error('Periodic sync failed:', error);
+  }
+}
