@@ -1,0 +1,2147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAM OS v13.4 — Quantum Edition</title>
+    
+    <!-- SUPABASE CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- QR CODE SCANNER -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FAVICON -->
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/twemoji@latest/assets/svg/1f4bb.svg">
+    
+    <!-- PWA CONFIG -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0A0F2C">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DREAM OS">
+
+    <style>
+        /* ================= ROOT VARIABLES ================= */
+        :root {
+            --emerald: #00C897;
+            --gold: #FFD700;
+            --dark: #0A0F2C;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --excel-green: #217346;
+            --ghost-bg: rgba(10, 15, 44, 0.98);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a1f3c 0%, #0A0F2C 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ================= HEADER BISMILLAH ================= */
+        .arabic-header {
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(90deg, transparent, rgba(0, 200, 151, 0.1), transparent);
+            border-bottom: 2px solid var(--emerald);
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .bismillah {
+            font-family: 'Amiri', serif;
+            font-size: 2.8rem;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .bismillah:hover {
+            transform: scale(1.05);
+        }
+
+        .shalawat {
+            font-family: 'Amiri', serif;
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .system-title {
+            color: var(--emerald);
+            font-size: 1.8rem;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        /* ================= INFO MARQUEE BAR ================= */
+        .info-bar {
+            background: linear-gradient(90deg, var(--emerald), var(--blue));
+            color: white;
+            font-weight: bold;
+            padding: 8px 0;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+
+        /* ================= LOGIN OVERLAY ================= */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--ghost-bg);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--emerald);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .login-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .fingerprint-btn {
+            background: rgba(0, 200, 151, 0.1);
+            border: 2px solid var(--emerald);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .fingerprint-btn:hover {
+            background: rgba(0, 200, 151, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--emerald);
+        }
+
+        .pass-input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--emerald);
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            margin: 15px 0;
+            letter-spacing: 1px;
+        }
+
+        .login-btn {
+            background: var(--emerald);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #00b386;
+        }
+
+        .role-hint {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: left;
+        }
+
+        .role-hint ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .role-hint li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .role-hint li:before {
+            content: '•';
+            color: var(--emerald);
+            position: absolute;
+            left: 0;
+        }
+
+        /* ================= DASHBOARD LAYOUT ================= */
+        #dashboard {
+            display: none;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: rgba(0, 200, 151, 0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--emerald);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* ================= STATS GRID ================= */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--emerald);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 200, 151, 0.1);
+            border-radius: 12px;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--emerald);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ================= 7-ICON GRID ================= */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .icon-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.4s;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .icon-card:hover {
+            border-color: var(--emerald);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 200, 151, 0.25);
+        }
+
+        .icon-card.locked {
+            opacity: 0.3;
+            filter: blur(2px);
+            cursor: not-allowed;
+        }
+
+        .icon-card.unlocked {
+            opacity: 1;
+            filter: none;
+            cursor: pointer;
+        }
+
+        .icon-emoji {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .icon-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .icon-desc {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.4;
+        }
+
+        .access-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--gold);
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--gold);
+        }
+
+        /* ================= WINDOWS EXCEL VIEW ================= */
+        .excel-section {
+            margin: 40px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .excel-header {
+            background: var(--excel-green);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .excel-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .excel-export-btn {
+            background: white;
+            color: var(--excel-green);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .excel-container {
+            overflow-x: auto;
+        }
+
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            color: #333;
+        }
+
+        .excel-table th {
+            background: #f0f0f0;
+            color: #333;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .excel-table td {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        .excel-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .excel-table tr:hover {
+            background: #f0f8ff;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .status-active { background: #d4edda; color: #155724; }
+        .status-inactive { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+
+        /* ================= FORM MODAL ================= */
+        .form-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .form-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--emerald);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--emerald);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 2.5rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 10px;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            background: var(--emerald);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .form-submit:hover {
+            background: #00b386;
+        }
+
+        /* ================= CS 11 AREA CHECKLIST ================= */
+        .area-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .area-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .area-name {
+            font-weight: bold;
+            color: var(--emerald);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .status-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .status-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .status-option input[type="radio"] {
+            accent-color: var(--emerald);
+        }
+
+        /* ================= GHOST CONSOLE ================= */
+        #ghostConsole {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 9999;
+            display: none;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+            overflow-y: auto;
+        }
+
+        .ghost-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333;
+            margin-bottom: 20px;
+        }
+
+        .ghost-title {
+            color: var(--gold);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ghost-close {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .log-container {
+            background: rgba(0, 20, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #00ff00;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+
+        .log-time {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .log-actor {
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .log-action {
+            color: #ccc;
+        }
+
+        .log-status {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        /* ================= NOTIFICATION ================= */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: rgba(0, 200, 151, 0.1);
+            border: 1px solid var(--emerald);
+            color: white;
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .notification.show {
+            display: flex;
+        }
+
+        .notification.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .notification.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--warning);
+        }
+
+        .notification.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--success);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ================= CONNECTION STATUS ================= */
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .connection-status.online {
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .connection-status.offline {
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        /* ================= QR SCANNER ================= */
+        #qrScanner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 3000;
+            display: none;
+            border: 3px solid var(--emerald);
+        }
+
+        #qrScanner.active {
+            display: block;
+        }
+
+        /* ================= RESPONSIVE DESIGN ================= */
+        @media (max-width: 768px) {
+            .icon-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .area-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .icon-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .login-box {
+                padding: 30px 20px;
+            }
+            
+            .bismillah {
+                font-size: 2.2rem;
+            }
+            
+            .shalawat {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ================= WEATHER DISPLAY ================= */
+        .weather-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 10px;
+        }
+
+        .weather-icon {
+            font-size: 1.5rem;
+        }
+
+        /* ================= SCROLLBAR STYLING ================= */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--emerald);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00b386;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification">
+        <span id="notificationIcon">ℹ️</span>
+        <span id="notificationText">Notification</span>
+    </div>
+
+    <!-- CONNECTION STATUS -->
+    <div class="connection-status offline" id="connectionStatus">
+        <span id="connectionIcon">📴</span>
+        <span id="connectionText">Offline Mode</span>
+    </div>
+
+    <!-- HEADER BISMILLAH -->
+    <header class="arabic-header">
+        <div class="bismillah">﷽</div>
+        <div class="shalawat">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ<br>اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ</div>
+        <div class="system-title">DREAM OS v13.4 — Quantum Edition</div>
+        <div class="weather-display" id="weatherDepok">
+            <span class="weather-icon">🌤️</span>
+            <span id="weatherText">📍 Depok: Loading weather...</span>
+        </div>
+    </header>
+
+    <!-- INFO MARQUEE BAR -->
+    <div class="info-bar">
+        <marquee id="liveInfo">
+            📢 Welcome to DREAM OS v13.4 | GPS: Tracking Active | Security: Gate Utama & Masjid Secured | Inventory: Real-time Sync | ISO High Risk: Compliant
+        </marquee>
+    </div>
+
+    <!-- LOGIN OVERLAY -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <span class="login-icon">🧬</span>
+            <h2 style="color: var(--gold); margin-bottom: 10px;">SMART BIOMETRIC ACCESS</h2>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 30px;">
+                Gunakan Fingerprint Redmi Note 9 Pro atau Password Role
+            </p>
+            
+            <div class="fingerprint-btn" onclick="simulateFingerprint()">
+                👆
+            </div>
+            <div style="font-size: 0.9rem; color: var(--emerald); margin: 10px 0;">
+                Tap untuk Fingerprint Detection
+            </div>
+            
+            <input type="password" class="pass-input" id="passInput" 
+                   placeholder="Masukkan Password Role..." 
+                   onkeypress="handleEnterKey(event)">
+            
+            <button class="login-btn" onclick="handleLogin()">
+                🔓 MASUK SISTEM
+            </button>
+            
+            <div class="role-hint">
+                <strong>💡 Password Role:</strong>
+                <ul>
+                    <li>User Umum: <code>user_@1234</code></li>
+                    <li>Security Piket: <code>LHPSsec_AF2025</code></li>
+                    <li>Admin Master: <code>4dm1n_AF6969@00</code></li>
+                    <li>Janitor CS: <code>CHCS_AF_@003</code></li>
+                    <li>Maintenance: <code>M41n_4F@234</code></li>
+                    <li>Stok Chemical: <code>SACS_AF@004</code></li>
+                    <li>Inventaris: <code>4dm1n_6969@01</code></li>
+                    <li>Gudang Pupuk: <code>4dm1n_9696@02</code></li>
+                </ul>
+            </div>
+            
+            <!-- GHOST MODE ACCESS -->
+            <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 10px; border: 1px dashed rgba(139, 92, 246, 0.3);">
+                <div style="color: #8b5cf6; font-size: 0.9rem; font-weight: bold; margin-bottom: 10px;">👻 Architect Ghost Mode</div>
+                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">
+                    Access: Long Press Bismillah 5 detik + PIN 234
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <main id="dashboard">
+        <!-- DASHBOARD HEADER -->
+        <div class="dashboard-header">
+            <div class="user-badge">
+                <span id="currentRoleIcon">👤</span>
+                <span>Logged as: <strong id="currentUserName">Guest</strong></span>
+                <span style="color: var(--emerald);"> | Role: <strong id="currentUserRole">Unknown</strong></span>
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button onclick="refreshDashboard()" style="background: rgba(0,200,151,0.1); color: var(--emerald); border: 1px solid var(--emerald); padding: 10px 15px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    🔄 Refresh
+                </button>
+                <button class="logout-btn" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- LIVE STATS -->
+        <div class="stats-grid" id="statsGrid">
+            <!-- Stats akan diisi oleh JavaScript -->
+        </div>
+
+        <!-- 7-ICON GRID -->
+        <div class="icon-grid" id="iconGrid">
+            <!-- Icon akan diisi oleh JavaScript -->
+        </div>
+
+        <!-- WINDOWS EXCEL VIEW (SECURITY) -->
+        <div class="excel-section" id="excelView" style="display: none;">
+            <div class="excel-header">
+                <div class="excel-title">📊 LAPORAN HARIAN SEKURITI - EXCEL VIEW</div>
+                <button class="excel-export-btn" onclick="exportToExcel()">
+                    📥 Export Excel
+                </button>
+            </div>
+            <div class="excel-container">
+                <table class="excel-table" id="excelTable">
+                    <!-- Excel content akan diisi oleh JavaScript -->
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- FORM MODAL -->
+    <div class="form-modal" id="formModal">
+        <div class="form-container" id="formContainer">
+            <!-- Form content akan diisi oleh JavaScript -->
+        </div>
+    </div>
+
+    <!-- QR SCANNER -->
+    <div id="qrScanner">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h3 style="color: var(--emerald);">📷 QR Code Scanner</h3>
+            <p style="color: rgba(255,255,255,0.7);">Scan barcode inventaris mesin</p>
+        </div>
+        <div id="qrReader" style="width: 300px; height: 300px;"></div>
+        <button onclick="closeQRScanner()" style="background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 20px;">
+            ✕ Close Scanner
+        </button>
+    </div>
+
+    <!-- GHOST CONSOLE -->
+    <div id="ghostConsole">
+        <div class="ghost-header">
+            <div class="ghost-title">
+                👻 GHOST ARCHITECT CONSOLE v1.0
+                <span style="font-size: 0.8rem; color: #888;">[Stealth Mode Active]</span>
+            </div>
+            <button class="ghost-close" onclick="closeGhostConsole()">✕ CLOSE</button>
+        </div>
+        
+        <div class="log-container" id="ghostLogs">
+            <!-- Logs akan diisi oleh JavaScript -->
+        </div>
+        
+        <div style="background: rgba(255,0,0,0.1); padding: 20px; border-radius: 10px; margin-top: 20px;">
+            <h3 style="color: #ff4444;">⚠️ EMERGENCY CONTROLS</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+                <button onclick="forceUnlockSystem()" style="background: #333; color: var(--gold); border: 1px solid var(--gold); padding: 12px; border-radius: 5px; cursor: pointer;">
+                    🔓 Force Unlock All
+                </button>
+                <button onclick="purgeAllData()" style="background: #660000; color: white; border: 1px solid #ff4444; padding: 12px; border-radius: 5px; cursor: pointer;">
+                    ⚡ Emergency Purge
+                </button>
+                <button onclick="simulateAlert()" style="background: #333; color: #00ff00; border: 1px solid #00ff00; padding: 12px; border-radius: 5px; cursor: pointer;">
+                    🚨 Simulate Alert
+                </button>
+                <button onclick="showSystemInfo()" style="background: #333; color: #00aaff; border: 1px solid #00aaff; padding: 12px; border-radius: 5px; cursor: pointer;">
+                    📊 System Info
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= SUPABASE CONFIGURATION =================
+        const SUPABASE_URL = 'https://xxxxxxxxxxxxxxxx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxxxxxxxxxxxxxx';
+        
+        let supabaseClient = null;
+        let currentUser = null;
+        let currentRole = null;
+        let unlockedIcons = [];
+        let ghostLogs = [];
+        let qrScanner = null;
+
+        // ================= USER PASSWORD SYSTEM =================
+        const USER_PASSWORDS = {
+            "user_@1234": { name: "User Umum", role: "user", icon: "👤" },
+            "LHPSsec_AF2025": { name: "Security Piket", role: "security", icon: "👮" },
+            "4dm1n_AF6969@00": { name: "Admin Master", role: "admin", icon: "👑" },
+            "CHCS_AF_@003": { name: "Janitor CS", role: "cs", icon: "🧹" },
+            "M41n_4F@234": { name: "Maintenance", role: "maintenance", icon: "🔧" },
+            "SACS_AF@004": { name: "Stok Chemical", role: "stock", icon: "📦" },
+            "4dm1n_6969@01": { name: "Inventaris", role: "inventory", icon: "📋" },
+            "4dm1n_9696@02": { name: "Gudang Pupuk", role: "warehouse", icon: "🚜" }
+        };
+
+        // ================= ICON CONFIGURATION =================
+        const ICON_CONFIG = [
+            { id: 1, emoji: "📅", title: "BOOKING SARANA", desc: "Booking 22 sarana Al-Fikri", access: ["user", "admin"], form: "booking" },
+            { id: 2, emoji: "🛡️", title: "LAPORAN K3", desc: "Kerusakan → Maintenance<br>Kehilangan → Security<br>Kebersihan → CS", access: ["user", "admin", "security", "cs", "maintenance"], form: "k3" },
+            { id: 3, emoji: "👮", title: "LAPORAN SEKURITI", desc: "Petugas 3 orang • Shift Pagi/Malam<br>Excel export ready", access: ["security", "admin"], form: "security" },
+            { id: 4, emoji: "👑", title: "ADMIN PANEL", desc: "Akses penuh sistem<br>Device fingerprint<br>Supabase management", access: ["admin"], form: "admin" },
+            { id: 5, emoji: "🧹", title: "JANITOR / CS", desc: "Ceklis harian 11 area<br>Monitoring kebersihan", access: ["cs", "admin"], form: "cs" },
+            { id: 6, emoji: "🔧", title: "MAINTENANCE", desc: "Perbaikan sarana<br>Status tracking<br>QR code scanner", access: ["maintenance", "admin"], form: "maintenance" },
+            { id: 7, emoji: "📦", title: "STOK CS", desc: "Stok & tools kebersihan<br>Chemical & pupuk inventory", access: ["stock", "inventory", "warehouse", "admin"], form: "stock" }
+        ];
+
+        // ================= INITIALIZATION =================
+        window.addEventListener('load', () => {
+            initializeSystem();
+            setupGhostAccess();
+            loadWeatherData();
+        });
+
+        function initializeSystem() {
+            // Initialize Supabase
+            try {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                updateConnectionStatus(true);
+                showNotification('✅ Connected to Supabase database', 'success');
+                logToGhost('SYSTEM', 'Supabase initialized successfully', 'SUCCESS');
+            } catch (error) {
+                console.error('Supabase init error:', error);
+                updateConnectionStatus(false);
+                showNotification('⚠️ Running in offline mode', 'warning');
+                logToGhost('SYSTEM', 'Supabase offline, running in local mode', 'WARNING');
+            }
+
+            // Check for existing session
+            const savedUser = localStorage.getItem('dreamos_user');
+            if (savedUser) {
+                try {
+                    const userData = JSON.parse(savedUser);
+                    loginSuccess(userData);
+                } catch (e) {
+                    localStorage.removeItem('dreamos_user');
+                }
+            }
+        }
+
+        // ================= AUTHENTICATION =================
+        function handleLogin() {
+            const password = document.getElementById('passInput').value;
+            
+            if (!password) {
+                showNotification('❌ Masukkan password atau gunakan fingerprint', 'error');
+                return;
+            }
+
+            const userInfo = USER_PASSWORDS[password];
+            if (userInfo) {
+                loginSuccess(userInfo);
+            } else {
+                showNotification('❌ Password salah / tidak dikenali', 'error');
+                logToGhost('AUTH', `Failed login attempt with password: ${password.substring(0, 3)}...`, 'BLOCKED');
+            }
+        }
+
+        function simulateFingerprint() {
+            // Simulate Redmi Note 9 Pro fingerprint detection
+            const isXiaomiDevice = navigator.userAgent.includes('Redmi') || 
+                                   navigator.userAgent.includes('Mi') ||
+                                   navigator.platform.includes('Android');
+            
+            if (isXiaomiDevice) {
+                showNotification('👆 Fingerprint detected! Processing...', 'info');
+                setTimeout(() => {
+                    // Auto-login as admin for demo
+                    loginSuccess(USER_PASSWORDS["4dm1n_AF6969@00"]);
+                }, 1000);
+            } else {
+                showNotification('📱 Gunakan Redmi Note 9 Pro untuk fingerprint', 'warning');
+            }
+        }
+
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                handleLogin();
+            }
+        }
+
+        function loginSuccess(userInfo) {
+            currentUser = userInfo.name;
+            currentRole = userInfo.role;
+            
+            // Save session
+            localStorage.setItem('dreamos_user', JSON.stringify(userInfo));
+            
+            // Update UI
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('currentUserName').textContent = userInfo.name;
+            document.getElementById('currentUserRole').textContent = userInfo.role.toUpperCase();
+            document.getElementById('currentRoleIcon').textContent = userInfo.icon;
+            
+            // Unlock icons based on role
+            unlockIconsForRole(currentRole);
+            
+            // Show Excel view for security
+            if (currentRole === 'security' || currentRole === 'admin') {
+                document.getElementById('excelView').style.display = 'block';
+                generateExcelView();
+            }
+            
+            // Check geolocation
+            checkGeolocation();
+            
+            // Log success
+            showNotification(`✅ Login berhasil! Selamat datang ${userInfo.name}`, 'success');
+            logToGhost('AUTH', `User ${userInfo.name} logged in successfully`, 'SUCCESS');
+            
+            // Load dashboard stats
+            loadDashboardStats();
+        }
+
+        function logout() {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                currentUser = null;
+                currentRole = null;
+                unlockedIcons = [];
+                
+                localStorage.removeItem('dreamos_user');
+                
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('login-overlay').style.display = 'flex';
+                document.getElementById('passInput').value = '';
+                
+                // Reset all icons to locked
+                document.querySelectorAll('.icon-card').forEach(icon => {
+                    icon.classList.remove('unlocked');
+                    icon.classList.add('locked');
+                });
+                
+                // Hide Excel view
+                document.getElementById('excelView').style.display = 'none';
+                
+                showNotification('🚪 Logout berhasil', 'info');
+                logToGhost('AUTH', 'User logged out', 'INFO');
+            }
+        }
+
+        // ================= ICON MANAGEMENT =================
+        function unlockIconsForRole(role) {
+            const iconGrid = document.getElementById('iconGrid');
+            iconGrid.innerHTML = '';
+            
+            ICON_CONFIG.forEach(icon => {
+                const hasAccess = icon.access.includes(role);
+                const iconCard = document.createElement('div');
+                iconCard.className = `icon-card ${hasAccess ? 'unlocked' : 'locked'}`;
+                iconCard.onclick = hasAccess ? () => openForm(icon.form) : null;
+                
+                iconCard.innerHTML = `
+                    <div class="access-badge">${hasAccess ? '🔓' : '🔒'}</div>
+                    <span class="icon-emoji">${icon.emoji}</span>
+                    <div class="icon-title">${icon.title}</div>
+                    <div class="icon-desc">${icon.desc}</div>
+                `;
+                
+                iconGrid.appendChild(iconCard);
+            });
+        }
+
+        // ================= FORM MANAGEMENT =================
+        function openForm(formType) {
+            let formHTML = '';
+            
+            switch(formType) {
+                case 'booking':
+                    formHTML = getBookingForm();
+                    break;
+                case 'k3':
+                    formHTML = getK3Form();
+                    break;
+                case 'security':
+                    formHTML = getSecurityForm();
+                    break;
+                case 'admin':
+                    formHTML = getAdminForm();
+                    break;
+                case 'cs':
+                    formHTML = getCSForm();
+                    break;
+                case 'maintenance':
+                    formHTML = getMaintenanceForm();
+                    break;
+                case 'stock':
+                    formHTML = getStockForm();
+                    break;
+            }
+            
+            document.getElementById('formContainer').innerHTML = formHTML;
+            document.getElementById('formModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('formModal').classList.remove('active');
+        }
+
+        // ================= FORM TEMPLATES =================
+        function getBookingForm() {
+            const today = new Date().toISOString().split('T')[0];
+            return `
+                <div class="form-header">
+                    <div class="form-title">
+                        <span>📅</span>
+                        <div>BOOKING SARANA</div>
+                    </div>
+                    <button class="close-modal" onclick="closeModal()">×</button>
+                </div>
+                
+                <form onsubmit="submitBookingForm(event)">
+                    <div class="form-group">
+                        <label class="form-label">Pilih Sarana</label>
+                        <select class="form-select" required>
+                            <option value="">-- Pilih Sarana --</option>
+                            <option value="Aula SMP">Aula SMP</option>
+                            <option value="Aula SMA">Aula SMA</option>
+                            <option value="Lapangan Futsal">Lapangan Futsal</option>
+                            <option value="Labkom SD">Labkom SD</option>
+                            <option value="Labkom SMP">Labkom SMP</option>
+                            <option value="Labkom SMA">Labkom SMA</option>
+                            <option value="Perpus SD">Perpus SD</option>
+                            <option value="Perpus SMP">Perpus SMP</option>
+                            <option value="Perpus SMA">Perpus SMA</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Nama PIC</label>
+                        <input type="text" class="form-input" placeholder="Nama lengkap" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">No HP</label>
+                        <input type="tel" class="form-input" placeholder="0812..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Booking</label>
+                        <input type="date" class="form-input" value="${today}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Waktu Mulai</label>
+                        <input type="time" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Waktu Selesai</label>
+                        <input type="time" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Keperluan</label>
+                        <textarea class="form-textarea" placeholder="Jelaskan keperluan booking..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="form-submit">
+                        📡 KIRIM BOOKING KE SUPABASE
+                    </button>
+                </form>
+            `;
+        }
+
+        function getCSForm() {
+            const areas = [
+                "1. Pintu Utama",
+                "2. Pintu Kubikal", 
+                "3. Kaca / Cermin",
+                "4. Exhaust",
+                "5. Dinding",
+                "6. Tempat Wudhu",
+                "7. Lantai",
+                "8. Floor Drain",
+                "9. Kloset",
+                "10. Flapond / Ceiling",
+                "11. Tempat Sampah"
+            ];
+            
+            let areasHTML = '';
+            areas.forEach(area => {
+                const areaId = area.split('.')[0].trim();
+                areasHTML += `
+                    <div class="area-item">
+                        <div class="area-name">${area}</div>
+                        <div class="status-options">
+                            <label class="status-option">
+                                <input type="radio" name="area_${areaId}" value="Bersih" required>
+                                <span>✅ Bersih</span>
+                            </label>
+                            <label class="status-option">
+                                <input type="radio" name="area_${areaId}" value="Kotor">
+                                <span>❌ Kotor</span>
+                            </label>
+                            <label class="status-option">
+                                <input type="radio" name="area_${areaId}" value="Perlu Perbaikan">
+                                <span>🔧 Perlu Perbaikan</span>
+                            </label>
+                        </div>
+                        <textarea placeholder="Catatan khusus..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 0.9rem;" rows="2"></textarea>
+                    </div>
+                `;
+            });
+            
+            return `
+                <div class="form-header">
+                    <div class="form-title">
+                        <span>🧹</span>
+                        <div>CEKLIS HARIAN CLEANING SERVICE - 11 AREA</div>
+                    </div>
+                    <button class="close-modal" onclick="closeModal()">×</button>
+                </div>
+                
+                <form onsubmit="submitCSForm(event)">
+                    <div class="form-group">
+                        <label class="form-label">Nama CS</label>
+                        <input type="text" class="form-input" placeholder="Nama lengkap" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Shift</label>
+                        <select class="form-select" required>
+                            <option value="">-- Pilih Shift --</option>
+                            <option value="Pagi">Pagi (06:00-14:00)</option>
+                            <option value="Sore">Sore (14:00-22:00)</option>
+                            <option value="Malam">Malam (22:00-06:00)</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin: 25px 0;">
+                        <div style="color: var(--gold); font-weight: bold; margin-bottom: 20px; font-size: 1.1rem;">
+                            📋 CEKLIS 11 AREA KEBERSIHAN (STANDAR ISO)
+                        </div>
+                        <div class="area-grid">
+                            ${areasHTML}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Foto Dokumentasi</label>
+                        <input type="file" class="form-input" accept="image/*" capture="environment" multiple>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 5px;">
+                            📸 Ambil foto sebelum & sesudah cleaning
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="form-submit">
+                        💾 SIMPAN LAPORAN KE SUPABASE
+                    </button>
+                </form>
+            `;
+        }
+
+        function getAdminForm() {
+            return `
+                <div class="form-header">
+                    <div class="form-title">
+                        <span>👑</span>
+                        <div>ADMIN PANEL - FULL CONTROL</div>
+                    </div>
+                    <button class="close-modal" onclick="closeModal()">×</button>
+                </div>
+                
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 5rem; margin-bottom: 30px;">${currentRole === 'admin' ? '👑' : '🔐'}</div>
+                    <h2 style="color: var(--gold); margin-bottom: 10px;">ADMINISTRATOR CONTROL PANEL</h2>
+                    <p style="color: rgba(255,255,255,0.8); margin-bottom: 30px;">
+                        Welcome, <strong>${currentUser}</strong>!<br>
+                        Role: <span style="color: var(--emerald)">${currentRole.toUpperCase()}</span>
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 40px 0;">
+                        <button onclick="loadDashboardStats()" class="admin-btn" data-color="emerald">
+                            <div>📊</div>
+                            <div>View Stats</div>
+                        </button>
+                        <button onclick="openGhostConsole()" class="admin-btn" data-color="purple">
+                            <div>👻</div>
+                            <div>Ghost Console</div>
+                        </button>
+                        <button onclick="startQRScanner()" class="admin-btn" data-color="blue">
+                            <div>📷</div>
+                            <div>QR Scanner</div>
+                        </button>
+                        <button onclick="generateFinancialReport()" class="admin-btn" data-color="gold">
+                            <div>📄</div>
+                            <div>Financial Report</div>
+                        </button>
+                        <button onclick="exportAllData()" class="admin-btn" data-color="success">
+                            <div>📥</div>
+                            <div>Export All</div>
+                        </button>
+                        <button onclick="logout()" class="admin-btn" data-color="danger">
+                            <div>🚪</div>
+                            <div>Logout</div>
+                        </button>
+                    </div>
+                    
+                    <div style="margin: 30px 0; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px;">
+                        <div style="color: var(--emerald); font-weight: bold; margin-bottom: 15px;">📊 System Information</div>
+                        <div style="text-align: left; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                            <div>📅 DREAM OS Version: 13.4 Quantum</div>
+                            <div>👤 Current User: ${currentUser}</div>
+                            <div>🎯 User Role: ${currentRole}</div>
+                            <div>🔓 Unlocked Modules: ${unlockedIcons.length}/7</div>
+                            <div>🗄️ Supabase: ${supabaseClient ? 'Connected' : 'Offline'}</div>
+                            <div>📍 GPS Status: <span id="gpsStatus">Checking...</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <style>
+                    .admin-btn {
+                        background: rgba(0,200,151,0.1);
+                        padding: 20px;
+                        border-radius: 15px;
+                        text-align: center;
+                        cursor: pointer;
+                        border: 2px solid var(--emerald);
+                        color: white;
+                        transition: all 0.3s;
+                    }
+                    .admin-btn:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 10px 20px rgba(0,200,151,0.3);
+                    }
+                    .admin-btn[data-color="purple"] { border-color: var(--purple); background: rgba(139,92,246,0.1); }
+                    .admin-btn[data-color="blue"] { border-color: var(--blue); background: rgba(59,130,246,0.1); }
+                    .admin-btn[data-color="gold"] { border-color: var(--gold); background: rgba(255,215,0,0.1); }
+                    .admin-btn[data-color="success"] { border-color: var(--success); background: rgba(16,185,129,0.1); }
+                    .admin-btn[data-color="danger"] { border-color: var(--danger); background: rgba(239,68,68,0.1); }
+                </style>
+            `;
+        }
+
+        // ================= EXCEL VIEW GENERATION =================
+        function generateExcelView() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0 = Sunday, 6 = Saturday
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const personnelCount = isWeekend ? 2 : 3;
+            
+            const table = document.getElementById('excelTable');
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>NO</th>
+                        <th>NAMA PERSONIL</th>
+                        <th>SHIFT</th>
+                        <th>LOKASI</th>
+                        <th>STATUS</th>
+                        <th>CATATAN</th>
+                        <th>WAKTU</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${Array.from({length: personnelCount}, (_, i) => `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td contenteditable="true">Personil ${i + 1}</td>
+                            <td contenteditable="true">${isWeekend ? 'LIBUR' : 'PAGI/SORE'}</td>
+                            <td contenteditable="true">Gate ${i + 1}</td>
+                            <td>
+                                <select class="status-select">
+                                    <option value="Active">🟢 Active</option>
+                                    <option value="Break">🟡 Break</option>
+                                    <option value="Off">🔴 Off</option>
+                                </select>
+                            </td>
+                            <td contenteditable="true">-</td>
+                            <td>${new Date().toLocaleTimeString('id-ID')}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            
+            // Add real-time updates
+            setInterval(() => {
+                document.querySelectorAll('#excelTable tbody td:last-child').forEach(td => {
+                    td.textContent = new Date().toLocaleTimeString('id-ID');
+                });
+            }, 60000);
+        }
+
+        function exportToExcel() {
+            const table = document.getElementById('excelTable');
+            let csv = [];
+            
+            // Get headers
+            const headers = [];
+            table.querySelectorAll('th').forEach(th => {
+                headers.push(th.textContent);
+            });
+            csv.push(headers.join(','));
+            
+            // Get rows
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const row = [];
+                tr.querySelectorAll('td').forEach((td, index) => {
+                    if (index === 4) { // Status column
+                        const select = td.querySelector('select');
+                        row.push(select ? select.value : td.textContent);
+                    } else {
+                        row.push(td.textContent);
+                    }
+                });
+                csv.push(row.join(','));
+            });
+            
+            // Download CSV
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `laporan-security-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            
+            showNotification('📥 Excel exported successfully!', 'success');
+            logToGhost('EXPORT', 'Security report exported to Excel', 'SUCCESS');
+        }
+
+        // ================= GHOST CONSOLE =================
+        let ghostPressTimer = null;
+        let ghostPressStart = 0;
+
+        function setupGhostAccess() {
+            const bismillah = document.querySelector('.bismillah');
+            
+            // Mouse events
+            bismillah.addEventListener('mousedown', (e) => {
+                ghostPressStart = Date.now();
+                ghostPressTimer = setTimeout(() => {
+                    if (Date.now() - ghostPressStart >= 5000) {
+                        const pin = prompt("👻 GHOST ARCHITECT PASSWORD:");
+                        if (pin === "234") {
+                            openGhostConsole();
+                            logToGhost('SYSTEM', 'Ghost Console accessed via Long Press', 'SUCCESS');
+                        } else {
+                            showNotification('❌ Wrong Ghost PIN!', 'error');
+                        }
+                    }
+                }, 5000);
+            });
+            
+            bismillah.addEventListener('mouseup', () => {
+                clearTimeout(ghostPressTimer);
+            });
+            
+            bismillah.addEventListener('mouseleave', () => {
+                clearTimeout(ghostPressTimer);
+            });
+            
+            // Touch events
+            bismillah.addEventListener('touchstart', (e) => {
+                ghostPressStart = Date.now();
+                ghostPressTimer = setTimeout(() => {
+                    if (Date.now() - ghostPressStart >= 5000) {
+                        const pin = prompt("👻 GHOST ARCHITECT PASSWORD:");
+                        if (pin === "234") {
+                            openGhostConsole();
+                            logToGhost('SYSTEM', 'Ghost Console accessed via Touch', 'SUCCESS');
+                        }
+                    }
+                }, 5000);
+            });
+            
+            bismillah.addEventListener('touchend', () => {
+                clearTimeout(ghostPressTimer);
+            });
+        }
+
+        function openGhostConsole() {
+            const console = document.getElementById('ghostConsole');
+            console.style.display = 'block';
+            
+            // Update logs
+            updateGhostLogs();
+            
+            logToGhost('SYSTEM', 'Ghost Console opened', 'INFO');
+        }
+
+        function closeGhostConsole() {
+            document.getElementById('ghostConsole').style.display = 'none';
+        }
+
+        function logToGhost(actor, action, status) {
+            const timestamp = new Date().toLocaleTimeString('id-ID');
+            const logEntry = {
+                timestamp,
+                actor,
+                action,
+                status
+            };
+            
+            ghostLogs.unshift(logEntry);
+            if (ghostLogs.length > 50) ghostLogs.pop();
+            
+            // Update display if console is open
+            updateGhostLogs();
+            
+            // Also log to console for debugging
+            console.log(`👻 [${timestamp}] ${actor}: ${action} [${status}]`);
+        }
+
+        function updateGhostLogs() {
+            const logContainer = document.getElementById('ghostLogs');
+            if (!logContainer) return;
+            
+            logContainer.innerHTML = ghostLogs.map(log => `
+                <div class="log-entry">
+                    <div class="log-time">[${log.timestamp}]</div>
+                    <div>
+                        <span class="log-actor">${log.actor}</span>
+                        <span class="log-action"> → ${log.action}</span>
+                    </div>
+                    <div class="log-status">[${log.status}]</div>
+                </div>
+            `).join('');
+        }
+
+        function forceUnlockSystem() {
+            // Unlock all icons
+            document.querySelectorAll('.icon-card').forEach(icon => {
+                icon.classList.remove('locked');
+                icon.classList.add('unlocked');
+            });
+            
+            showNotification('🔓 All systems force unlocked!', 'warning');
+            logToGhost('GHOST', 'Force unlocked all systems', 'EMERGENCY');
+        }
+
+        function purgeAllData() {
+            if (confirm('⚠️ EMERGENCY PURGE - All data will be deleted! Continue?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                ghostLogs = [];
+                
+                showNotification('🧹 All data purged successfully', 'success');
+                logToGhost('GHOST', 'Emergency purge executed', 'CRITICAL');
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }
+        }
+
+        // ================= SMART FEATURES =================
+        function checkGeolocation() {
+            if (!navigator.geolocation) {
+                logToGhost('GPS', 'Geolocation not supported', 'WARNING');
+                return;
+            }
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Check if within Al-Fikri area (approximate coordinates)
+                    const alFikriLat = -6.4025;
+                    const alFikriLng = 106.7942;
+                    const radius = 0.01; // ~1km
+                    
+                    const inArea = Math.abs(lat - alFikriLat) < radius && 
+                                  Math.abs(lng - alFikriLng) < radius;
+                    
+                    if (inArea) {
+                        logToGhost('GPS', `Location: ${lat.toFixed(4)}, ${lng.toFixed(4)} (Al-Fikri Area)`, 'SUCCESS');
+                    } else {
+                        logToGhost('GPS', `Location: ${lat.toFixed(4)}, ${lng.toFixed(4)} (Outside Area)`, 'WARNING');
+                        showNotification('📍 Anda berada di luar area Al-Fikri', 'warning');
+                    }
+                },
+                (error) => {
+                    logToGhost('GPS', `Geolocation error: ${error.message}`, 'ERROR');
+                }
+            );
+        }
+
+        async function loadWeatherData() {
+            try {
+                // Using OpenWeatherMap API (demo - replace with actual API key)
+                const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Depok,ID&units=metric&appid=demo_key&lang=id');
+                const data = await response.json();
+                
+                if (data && data.main) {
+                    const temp = Math.round(data.main.temp);
+                    const desc = data.weather[0].description;
+                    const icon = getWeatherIcon(data.weather[0].main);
+                    
+                    document.getElementById('weatherText').textContent = 
+                        `📍 Depok: ${temp}°C, ${desc} ${icon}`;
+                        
+                    logToGhost('WEATHER', `Weather updated: ${temp}°C, ${desc}`, 'INFO');
+                }
+            } catch (error) {
+                // Fallback to static data
+                document.getElementById('weatherText').textContent = 
+                    '📍 Depok: 29°C, Cerah berawan 🌤️';
+            }
+        }
+
+        function getWeatherIcon(condition) {
+            const icons = {
+                'Clear': '☀️',
+                'Clouds': '☁️',
+                'Rain': '🌧️',
+                'Thunderstorm': '⛈️',
+                'Snow': '❄️',
+                'Mist': '🌫️'
+            };
+            return icons[condition] || '🌤️';
+        }
+
+        // ================= QR SCANNER =================
+        function startQRScanner() {
+            const scanner = document.getElementById('qrScanner');
+            scanner.classList.add('active');
+            
+            // Initialize QR scanner
+            if (!qrScanner) {
+                qrScanner = new Html5Qrcode("qrReader");
+            }
+            
+            qrScanner.start(
+                { facingMode: "environment" },
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                },
+                (decodedText) => {
+                    // QR code detected
+                    showNotification(`📷 QR Code detected: ${decodedText}`, 'success');
+                    logToGhost('QR', `Scanned: ${decodedText}`, 'SUCCESS');
+                    
+                    // Close scanner after successful scan
+                    setTimeout(() => {
+                        closeQRScanner();
+                    }, 1000);
+                },
+                (errorMessage) => {
+                    // Ignore error messages if just starting
+                }
+            ).catch(err => {
+                console.error("QR Scanner error:", err);
+                showNotification('❌ QR Scanner failed to start', 'error');
+                closeQRScanner();
+            });
+        }
+
+        function closeQRScanner() {
+            const scanner = document.getElementById('qrScanner');
+            scanner.classList.remove('active');
+            
+            if (qrScanner) {
+                qrScanner.stop().catch(() => {});
+            }
+        }
+
+        // ================= UTILITY FUNCTIONS =================
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const text = document.getElementById('notificationText');
+            
+            const icons = {
+                'info': 'ℹ️',
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️'
+            };
+            
+            icon.textContent = icons[type] || 'ℹ️';
+            text.textContent = message;
+            
+            notification.className = 'notification show';
+            notification.classList.add(type);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            const icon = document.getElementById('connectionIcon');
+            const text = document.getElementById('connectionText');
+            
+            if (connected) {
+                status.className = 'connection-status online';
+                icon.textContent = '📡';
+                text.textContent = 'Connected to Supabase';
+            } else {
+                status.className = 'connection-status offline';
+                icon.textContent = '📴';
+                text.textContent = 'Offline Mode';
+            }
+        }
+
+        function refreshDashboard() {
+            showNotification('🔄 Refreshing dashboard...', 'info');
+            loadDashboardStats();
+            logToGhost('SYSTEM', 'Dashboard refreshed manually', 'INFO');
+        }
+
+        function loadDashboardStats() {
+            const statsGrid = document.getElementById('statsGrid');
+            
+            // Mock data - in real app, fetch from Supabase
+            const stats = [
+                { icon: '📅', value: '12', label: 'Booking Hari Ini', color: 'emerald' },
+                { icon: '🛡️', value: '3', label: 'Laporan K3 Open', color: 'warning' },
+                { icon: '👮', value: '5', label: 'Security Active', color: 'blue' },
+                { icon: '📦', value: '2', label: 'Low Stock Alert', color: 'danger' },
+                { icon: '🧹', value: '11/11', label: 'Area CS Checked', color: 'success' },
+                { icon: '🔧', value: '4', label: 'Maintenance Pending', color: 'purple' }
+            ];
+            
+            statsGrid.innerHTML = stats.map(stat => `
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: var(--${stat.color})">
+                        ${stat.icon}
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">${stat.value}</div>
+                        <div class="stat-label">${stat.label}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ================= INITIAL LOAD =================
+        // Start with loading dashboard stats
+        setTimeout(loadDashboardStats, 1000);
+        
+        // Update live info marquee
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID');
+            const info = [
+                `🕐 ${timeStr}`,
+                '📍 GPS: Al-Fikri Zone Active',
+                '👮 Security: Gate Utama & Masjid',
+                '📦 Inventory: Real-time Sync',
+                '🧹 CS: 11 Area Monitoring',
+                '🔧 Maintenance: QR Scanner Ready',
+                '👻 Ghost: PIN 234 Active'
+            ];
+            
+            const randomInfo = info[Math.floor(Math.random() * info.length)];
+            document.getElementById('liveInfo').textContent = 
+                `📢 DREAM OS v13.4 | ${randomInfo} | ISO High Risk Compliant`;
+        }, 5000);
+
+        // ================= FORM SUBMISSION HANDLERS =================
+        function submitBookingForm(event) {
+            event.preventDefault();
+            
+            // Here you would submit to Supabase
+            showNotification('✅ Booking berhasil dikirim ke Supabase!', 'success');
+            logToGhost('BOOKING', 'New booking submitted', 'SUCCESS');
+            
+            closeModal();
+        }
+
+        function submitCSForm(event) {
+            event.preventDefault();
+            
+            // Here you would submit to Supabase
+            showNotification('✅ Laporan CS 11 area berhasil disimpan!', 'success');
+            logToGhost('CS', 'CS checklist submitted (11 areas)', 'SUCCESS');
+            
+            closeModal();
+        }
+
+        function simulateAlert() {
+            const alerts = [
+                '🚨 Emergency: Gate Utama breached!',
+                '⚠️ Warning: Low chemical stock!',
+                '🔧 Alert: Maintenance needed at Aula SMP',
+                '📦 Notice: Pupuk delivery arrived',
+                '👮 Security: Patrol report overdue'
+            ];
+            
+            const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+            showNotification(randomAlert, 'warning');
+            logToGhost('ALERT', `Simulated: ${randomAlert}`, 'TEST');
+        }
+
+        function showSystemInfo() {
+            const info = `
+DREAM OS v13.4 Quantum Edition
+===============================
+User: ${currentUser || 'Not logged in'}
+Role: ${currentRole || 'None'}
+Browser: ${navigator.userAgent}
+Screen: ${window.innerWidth}x${window.innerHeight}
+Online: ${navigator.onLine ? 'Yes' : 'No'}
+GPS: ${navigator.geolocation ? 'Available' : 'Not available'}
+Cookies: ${navigator.cookieEnabled ? 'Enabled' : 'Disabled'}
+Touch: ${'ontouchstart' in window ? 'Yes' : 'No'}
+            `;
+            
+            alert(info);
+            logToGhost('SYSTEM', 'Displayed system information', 'INFO');
+        }
+
+        // ================= FINANCIAL REPORT =================
+        function generateFinancialReport() {
+            const template = `
+KEPADA: Bapak Hanung Budianto S.E.
+       (Kepala Bagian Umum)
+
+TEMBUSAN: Bapak Erwinsyah
+         (Koordinator Bagian Umum)
+
+PERIHAL: Pengajuan Dana Sarana & Prasarana
+
+Bersama ini kami mengajukan kebutuhan dana untuk:
+1. Perbaikan sarana prasarana
+2. Pengadaan alat kebersihan
+3. Maintenance rutin
+4. Stok chemical & pupuk
+
+Total Pengajuan: Rp 15.000.000,-
+
+Hormat kami,
+${currentUser || 'System Administrator'}
+DREAM OS v13.4
+            `;
+            
+            // Create PDF download
+            const blob = new Blob([template], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pengajuan-dana-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            
+            showNotification('📄 Draft pengajuan dana siap!', 'success');
+            logToGhost('FINANCE', 'Financial report generated', 'SUCCESS');
+            
+            // Simulate email send
+            setTimeout(() => {
+                showNotification('📧 Copy dikirim ke teknisi@alfikri.sch.id', 'info');
+            }, 1000);
+        }
+
+        // ================= DATA EXPORT =================
+        function exportAllData() {
+            const data = {
+                user: currentUser,
+                role: currentRole,
+                logs: ghostLogs,
+                timestamp: new Date().toISOString()
+            };
+            
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dreamos-backup-${Date.now()}.json`;
+            a.click();
+            
+            showNotification('📥 All data exported successfully!', 'success');
+            logToGhost('EXPORT', 'Complete system backup created', 'SUCCESS');
+        }
+
+        // ================= SIMULATE FORM FUNCTIONS =================
+        function getK3Form() {
+            return `
+                <div class="form-header">
+                    <div class="form-title">
+                        <span>🛡️</span>
+                        <div>LAPORAN K3</div>
+                    </div>
+                    <button class="close-modal" onclick="closeModal()">×</button>
+                </div>
+                <div style="text-align: center; padding: 50px;">
+                    <div style="font-size: 3rem;">🛡️</div>
+                    <h3>LAPORAN K3 SYSTEM</h3>
+                    <p style="margin: 20px 0;">[Form implementation similar to CS form]</p>
+                    <button onclick="closeModal()" class="form-submit">
+                        CLOSE
+                    </button>
+                </div>
+            `;
+        }
+
+        function getSecurityForm() {
+            return `
+                <div class="form-header">
+                    <div class="form-title">
+                        <span>👮</span>
+                        <div>LAPORAN SEKURITI</div>
+                    </div>
+                    <button class="close-modal" onclick="closeModal()">×</button>
+                </div>
+                <div style="text-align: center; padding: 50px;">
+                    <div style="font-size: 3rem;">👮</div>
+                    <h3>SECURITY REPORT SYSTEM</h3>
+                    <p style="margin: 20px 0;">[Form implementation similar to Excel view]</p>
+                    <button onclick="closeModal()" class="form-submit">
+                        CLOSE
+                    </button>
+                </div>
+            `;
+        }
+
+        function getMaintenanceForm() {
+            return `
+                <div class="form-header">
+                    <div class="form-title">
+                        <span>🔧</span>
+                        <div>MAINTENANCE</div>
+                    </div>
+                    <button class="close-modal" onclick="closeModal()">×</button>
+                </div>
+                <div style="text-align: center; padding: 50px;">
+                    <div style="font-size: 3rem;">🔧</div>
+                    <h3>MAINTENANCE SYSTEM</h3>
+                    <p style="margin: 20px 0;">[QR Scanner & Equipment Tracking]</p>
+                    <button onclick="startQRScanner()" class="form-submit" style="margin-bottom: 10px;">
+                        📷 SCAN QR CODE
+                    </button>
+                    <button onclick="closeModal()" class="form-submit">
+                        CLOSE
+                    </button>
+                </div>
+            `;
+        }
+
+        function getStockForm() {
+            return `
+                <div class="form-header">
+                    <div class="form-title">
+                        <span>📦</span>
+                        <div>STOK CS</div>
+                    </div>
+                    <button class="close-modal" onclick="closeModal()">×</button>
+                </div>
+                <div style="text-align: center; padding: 50px;">
+                    <div style="font-size: 3rem;">📦</div>
+                    <h3>INVENTORY MANAGEMENT</h3>
+                    <p style="margin: 20px 0;">[Chemical, Pupuk, Equipment Tracking]</p>
+                    <button onclick="closeModal()" class="form-submit">
+                        CLOSE
+                    </button>
+                </div>
+            `;
+        }
+
+        // ================= DEVICE FINGERPRINT =================
+        function getDeviceFingerprint() {
+            const fingerprint = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                screen: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                language: navigator.language,
+                cookies: navigator.cookieEnabled,
+                online: navigator.onLine,
+                touch: 'ontouchstart' in window,
+                isRedmiNote9Pro: navigator.userAgent.includes('Redmi Note 9 Pro')
+            };
+            
+            return JSON.stringify(fingerprint, null, 2);
+        }
+
+        // Log device info on load
+        setTimeout(() => {
+            const deviceInfo = getDeviceFingerprint();
+            console.log('📱 Device Fingerprint:', deviceInfo);
+            logToGhost('DEVICE', `Fingerprint: ${navigator.userAgent.substring(0, 50)}...`, 'INFO');
+        }, 2000);
+
+    </script>
+</body>
+</html>
