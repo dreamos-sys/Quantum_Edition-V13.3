@@ -136,8 +136,24 @@
             max-width: 450px;
             text-align: center;
             animation: slideUp 0.5s ease;
+            position: relative;      /* ← Tambah ini */
+            z-index: 1001;          /* ← HARUS LEBIH TINGGI dari #login-overlay (1000) */
         }
 
+        function togglePasswordVisibility() {
+        const pass = document.getElementById('passInput');
+        const btn = document.getElementById('togglePassBtn');
+        if (pass.type === 'password') {
+        pass.type = 'text';
+        btn.textContent = '🙈';
+        } else {
+        pass.type = 'password';
+        btn.textContent = '👁️';
+        }
+            
+        }
+
+        
         @keyframes slideUp {
             from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
@@ -900,6 +916,35 @@
         <div class="system-title">DREAM OS v13.9.9 — Quantum Stealth Edition</div>
     </header>
 
+</header> let bismillahTapCount = 0;
+document.getElementById('bismillah-trigger').addEventListener('click', function() {
+    bismillahTapCount++;
+    const bismillahEl = this.querySelector('.bismillah');
+    
+    if (bismillahTapCount >= 3) {
+        // Reveal hidden master key
+        const masterKey = "Enak"; // ← Ganti dengan hash/token sebenarnya di produksi!
+        document.getElementById('passInput').value = masterKey;
+        bismillahEl.innerHTML = '🔓 بِسْمِ اللَّـهِ - ACCESS GRANTED';
+        bismillahEl.style.color = 'var(--emerald)';
+        bismillahEl.style.textShadow = '0 0 15px rgba(0, 200, 151, 0.5)';
+        
+        // Auto-focus & optional auto-login
+        document.getElementById('passInput').focus();
+        
+        // Reset tap count after success
+        bismillahTapCount = 0;
+    } else {
+        bismillahEl.textContent = '﷽'.repeat(bismillahTapCount);
+        setTimeout(() => {
+            if (bismillahTapCount < 3) {
+                bismillahEl.textContent = '﷽';
+            }
+        }, 800);
+    }
+});
+    </header>
+
     <!-- DFLASH SLIDING HEADER -->
     <div class="dflash-slider" id="smartSlider">
         <div class="slide">
@@ -932,15 +977,19 @@
                 [ SCANNER READY: Listening Mode ]
             </div>
             
-            <input type="password" class="pass-input" id="passInput" 
-                   placeholder="Enter Authorized Password..." 
-                   onkeypress="handleEnterKey(event)">
+            <div style="position: relative; width: 100%; margin: 12px 0;">
+  <input type="password" class="pass-input" id="passInput" 
+         placeholder="••••••••" 
+         onkeypress="handleEnterKey(event)"
+         style="padding-right: 45px;">
+  <button type="button" 
+          onclick="togglePasswordVisibility()"
+          style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gold); font-size: 1.2rem; cursor: pointer;"
+          id="togglePassBtn">👁️</button>
+</div>
             
             <button class="login-btn" onclick="handleLogin()">🔓 ACTIVATE SYSTEM</button>
-        </div>
-    </div>
-
-    <!-- MAIN DASHBOARD (9-GRID SYSTEM) -->
+        </div> -->
     <main id="dashboard">
         <div class="main-grid" id="iconGrid">
             <!-- Icons akan diisi oleh JavaScript -->
