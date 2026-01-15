@@ -111,7 +111,7 @@
         }
 
         /* ================= LOGIN OVERLAY ================= */
-        #login-overlay {
+            #login-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -127,7 +127,7 @@
             padding: 20px;
         }
 
-        .login-box {
+         .login-box {
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid var(--emerald);
             border-radius: 20px;
@@ -136,28 +136,16 @@
             max-width: 450px;
             text-align: center;
             animation: slideUp 0.5s ease;
-            position: relative;      /* ← Tambah ini */
-            z-index: 1001;          /* ← HARUS LEBIH TINGGI dari #login-overlay (1000) */
-        }
+            position: relative;   /* ← ini CSS, boleh! */
+            z-index: 1001;       /* ← ini CSS, boleh! */
+         }
 
-        function togglePasswordVisibility() {
-        const pass = document.getElementById('passInput');
-        const btn = document.getElementById('togglePassBtn');
-        if (pass.type === 'password') {
-        pass.type = 'text';
-        btn.textContent = '🙈';
-        } else {
-        pass.type = 'password';
-        btn.textContent = '👁️';
-        }
-            
-        }
+        @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
 
         
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
 
         .login-icon { font-size: 3.5rem; margin-bottom: 15px; display: block; }
 
