@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a192f" />
+  <title>DREAM OS - SIF AL-FIKRI</title>
+  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌟</text></svg>">
+  <link rel="manifest" href="manifest.json" />
+  
+  <!-- External Libraries (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ================= ROOT VARIABLES ================= */
+    :root {
+      --gold: #d4af37;
+      --deep: #0a192f;
+      --glass: rgba(255, 255, 255, 0.1);
+      --text-light: #e6f1ff;
+      --emerald: #00C897;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+    
+    body {
+      background: radial-gradient(circle at center, #1a1f3c 0%, var(--deep) 100%);
+      color: var(--text-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 80px;
+    }
+    
+    /* ================= HEADER BISMILLAH ================= */
+    .arabic-header {
+      text-align: center;
+      padding: 15px;
+      background: linear-gradient(90deg, transparent, rgba(0, 200, 151, 0.1), transparent);
+      border-bottom: 2px solid var(--emerald);
+      margin-bottom: 15px;
+    }
+    
+    .bismillah {
+      font-family: 'Amiri', serif;      font-size: 2.2rem;
+      color: var(--gold);
+      text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    
+    .shalawat {
+      font-family: 'Amiri', serif;
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 8px 0;
+      line-height: 1.5;
+    }
+    
+    .system-title {
+      color: var(--emerald);
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      margin-top: 5px;
+    }
+    
+    /* ================= SMART SLIDER ================= */
+    .smart-slider {
+      height: 180px;
+      overflow: hidden;
+      position: relative;
+      margin: 0 15px 20px;
+      border-radius: 20px;
+      background: rgba(10, 25, 47, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: 0 0 20px rgba(0, 200, 151, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 20px;
+    }
+    
+    .slide {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      transition: opacity 0.8s ease-in-out;
+    }
+    
+    .slide.active {
+      opacity: 1;
+      z-index: 10;    }
+    
+    .slide-content {
+      padding: 15px;
+    }
+    
+    .slide-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 1.2rem;
+    }
+    
+    .slide-text {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    
+    /* ================= LOGIN OVERLAY ================= */
+    #login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 44, 0.98);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    
+    .login-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--emerald);
+      border-radius: 20px;
+      padding: 30px 25px;
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+    }
+    
+    .fingerprint-btn {
+      background: rgba(0, 200, 151, 0.1);
+      border: 2px solid var(--emerald);
+      border-radius: 50%;
+      width: 75px;
+      height: 75px;      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin: 15px auto;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .fingerprint-btn:hover {
+      background: rgba(0, 200, 151, 0.2);
+      transform: scale(1.1);
+      box-shadow: 0 0 15px var(--emerald);
+    }
+    
+    .pass-input-container {
+      position: relative;
+      width: 100%;
+      margin: 15px 0;
+    }
+    
+    .pass-input {
+      width: 100%;
+      padding: 12px 45px 12px 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--emerald);
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      text-align: center;
+      letter-spacing: 4px;
+      transition: all 0.3s;
+    }
+    
+    .pass-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.5);
+      outline: none;
+    }
+    
+    .eye-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--gold);
+      transition: color 0.3s;
+      z-index: 10;    }
+    
+    .eye-toggle:hover {
+      color: #4ade80;
+    }
+    
+    .eye-toggle:active {
+      transform: translateY(-50%) scale(0.9);
+    }
+    
+    .login-btn {
+      background: var(--emerald);
+      color: white;
+      border: none;
+      padding: 14px 0;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+    
+    .login-btn:hover {
+      background: #00b386;
+    }
+    
+    /* ================= ICON GRID SYSTEM ================= */
+    .main-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      padding: 0 15px;
+    }
+    
+    .icon-box {
+      background: rgba(25, 42, 86, 0.5);
+      border-radius: 16px;
+      height: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+        .icon-box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 5px 15px rgba(0, 200, 151, 0.3);
+    }
+    
+    .icon-box[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    .icon-emoji {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+    
+    .icon-label {
+      font-weight: bold;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    
+    /* ================= BOTTOM NAVIGATION ================= */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 15, 44, 0.9);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      border-top: 1px solid rgba(212, 175, 55, 0.2);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 5px 0;
+    }
+    
+    .nav-icon {
+      font-size: 1.5rem;
+      margin-bottom: 4px;    }
+    
+    /* ================= ANIMATIONS ================= */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    .shake {
+      animation: shake 0.3s;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    /* ================= FOOTER ================= */
+    .footer {
+      margin-top: 30px;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+      border-top: 1px solid rgba(212, 175, 55, 0.1);
+    }
+    
+    /* ================= RESPONSIVE DESIGN ================= */
+    @media (max-width: 480px) {
+      .bismillah { font-size: 1.8rem; }
+      .shalawat { font-size: 0.95rem; }
+      .system-title { font-size: 1.2rem; }
+      .smart-slider { height: 160px; }
+      .icon-box { height: 90px; }
+      .icon-emoji { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER BISMILLAH -->
+  <header class="arabic-header" id="bismillah-trigger">
+    <div class="bismillah">﷽</div>
+    <div class="shalawat">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ<br>اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</div>
+    <div class="system-title">DREAM OS v13.4.5 — SIF AL-FIKRI</div>  </header>
+
+  <!-- SMART SLIDER (5 SLIDES) -->
+  <div class="smart-slider" id="sif-slider">
+    <div class="slide active">
+      <div class="slide-content">
+        <div class="slide-title" style="color: var(--gold);">👋 SELAMAT DATANG</div>
+        <div class="slide-text">
+          Keluarga besar SIF Al-Fikri<br>
+          Silakan pilih form sesuai kebutuhan
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-content">
+        <div class="slide-title" style="color: #3b82f6;">🌦️ CUACA DEPOK</div>
+        <div class="slide-text">Suhu: 28°C • Hujan Ringan<br>Auto-alert: Taman siaga genangan</div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-content">
+        <div class="slide-title" style="color: var(--warning);">🚗 LALIN MARGONDA</div>
+        <div class="slide-text">Status: Lancar • 12 menit<br>Logistik: Truck Alat Taman on-track</div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-content">
+        <div class="slide-title" style="color: var(--success);">✅ K3 PROGRESS</div>
+        <div class="slide-text">Kebersihan Area: 98%<br>✓ Laporan Perbaikan AC Lt.2 Selesai</div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-content">
+        <div class="slide-title" style="color: var(--gold);">📢 INFO SEKOLAH</div>
+        <div class="slide-text" id="admin-broadcast">[Pengumuman hari ini akan muncul di sini]</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN OVERLAY -->
+  <div id="login-overlay">
+    <div class="login-box">
+      <h2 style="color: var(--gold); margin-bottom: 8px; font-family: 'Amiri', serif; font-size:1.5rem;">SMART BIOMETRIC ACCESS</h2>
+      <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 20px;">
+        Verified Fingerprint Redmi Note 9 Pro atau Password Master
+      </p>
+      
+      <div class="fingerprint-btn" onclick="simulateFingerprint()">👆</div>
+      <div id="finger-status" style="font-size: 0.85rem; color: var(--emerald); margin: 12px 0; font-weight: bold;">
+        [ SCANNER READY: Listening Mode ]      </div>
+      
+      <div class="pass-input-container">
+        <input type="password" class="pass-input" id="masterInput" 
+               placeholder="••••••••" 
+               onkeydown="handleEnterKey(event)">
+        <span class="eye-toggle" id="eyeToggle">👁️</span>
+      </div>
+      
+      <button class="login-btn" onclick="handleLogin()">🔓 AKTIFKAN SISTEM</button>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD (9-GRID SYSTEM) -->
+  <main id="dashboard" style="display:none;">
+    <div class="main-grid" id="iconGrid">
+      <!-- Icons will be generated by JavaScript -->
+    </div>
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="goTo('home')">
+      <div class="nav-icon">🏠</div>
+      <div>Home</div>
+    </div>
+    <div class="nav-item" onclick="goTo('analytics')">
+      <div class="nav-icon">📊</div>
+      <div>Data</div>
+    </div>
+    <div class="nav-item" onclick="goTo('chat')">
+      <div class="nav-icon">💬</div>
+      <div>Chat</div>
+    </div>
+    <div class="nav-item" onclick="goTo('legacy')">
+      <div class="nav-icon">📜</div>
+      <div>Legacy</div>
+    </div>
+    <div class="nav-item" onclick="goTo('system')">
+      <div class="nav-icon">⚙️</div>
+      <div>System</div>
+    </div>
+  </div>
+
+  <!-- FOOTER ISO -->
+  <div class="footer">
+    <div>✨ THE DREAM TEAM - THE POWER SOUL OF SHALAWAT ✨</div>
+    <div>Kepala Bagian Umum: Bapak Hanung Budianto S. E</div>
+    <div>Koordinator Bagian Umum: Bapak Erwinsyah</div>
+    <div style="margin-top:8px; letter-spacing:1px; color:var(--gold);">      SYSTEM COMPLIANT WITH ISO STANDARDS • 2026
+    </div>
+  </div>
+
+  <script>
+    // ================= SYSTEM CONFIGURATION =================
+    const SYSTEM_CONFIG = {
+      masterKey: 'Mr.M_Architect_2025',
+      secureIp: '114.10.76.110',
+      maxFailedAttempts: 3,
+      lockoutDuration: 300000 // 5 minutes in milliseconds
+    };
+
+    // ================= ENCRYPTED USER DATABASE =================
+    const USER_DATABASE = {
+      'dXNlcl9AMTIzNA==': { name: "User Umum", role: "user", icon: "👤" },
+      'TEhQU3NlY19BRjIwMjU=': { name: "Security Piket", role: "security", icon: "👮" },
+      'NGRtMW5fQUY2OTY5QDAw': { name: "Admin No.8", role: "admin", icon: "👑" },
+      'Q0hDU19BRl9AMDAz': { name: "Janitor CS", role: "cs", icon: "🧹" },
+      'TTQxbjRmQDIzNA==': { name: "Maintenance", role: "maintenance", icon: "🔧" },
+      'U0FDU19BRkAwMDQ=': { name: "Stok & Alat", role: "stock", icon: "📦" },
+      'NGRtMW5fNjk2OUAwMQ==': { name: "Inventaris", role: "inventory", icon: "📋" },
+      'NGRtMW5fOTY5NkAwMg==': { name: "Gudang", role: "warehouse", icon: "🌱" }
+    };
+
+    // ================= ICON BLUEPRINT =================
+    const ICON_BLUEPRINT = [
+      { id: 1, emoji: "📅", title: "BOOKING SARANA", access: ["user", "admin"] },
+      { id: 2, emoji: "⚠️", title: "LAPORAN K3", access: ["user", "admin", "security", "cs", "maintenance"] },
+      { id: 3, emoji: "👮", title: "SEKURITI", access: ["security", "admin"] },
+      { id: 4, emoji: "🧹", title: "CEKLIS JANITOR", access: ["cs", "admin"] },
+      { id: 5, emoji: "🌳", title: "PEMELIHARAAN TAMAN", access: ["cs", "admin"] },
+      { id: 6, emoji: "📊", title: "STOK & ALAT", access: ["stock", "inventory", "warehouse", "admin", "cs"] },
+      { id: 7, emoji: "🔧", title: "MAINTENANCE", access: ["maintenance", "admin"] },
+      { id: 8, emoji: "👑", title: "ADMIN NO.8", access: ["admin"] },
+      { id: 9, emoji: "📦", title: "GUDANG", access: ["warehouse", "admin"] }
+    ];
+
+    // ================= VIEW MAPPING =================
+    const viewMap = {
+      1: 'booking',
+      2: 'k3',
+      3: 'security',
+      4: 'janitor',
+      5: 'taman',
+      6: 'stock',
+      7: 'maintenance',
+      8: 'admin',
+      9: 'gudang'
+    };
+    // ================= SYSTEM STATE =================
+    let currentUser = "Guest";
+    let currentRole = "guest";
+    let failedAttempts = parseInt(localStorage.getItem('failed_attempts')) || 0;
+    let isLocked = false;
+    let lockoutUntil = parseInt(localStorage.getItem('lockout_until')) || 0;
+
+    // ================= INITIALIZATION =================
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("🚀 DREAM OS v13.4.5 initializing...");
+      
+      // Check if system is locked
+      checkLockoutStatus();
+      
+      // Start slide rotation
+      startSlideRotation();
+      
+      // Register service worker for PWA
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(console.warn);
+      }
+      
+      // Initialize password toggle AFTER DOM is fully loaded
+      setTimeout(initPasswordToggle, 500);
+      
+      // Auto-focus input
+      setTimeout(() => {
+        const input = document.getElementById('masterInput');
+        if (input) {
+          input.focus();
+          console.log("✅ Input field focused");
+        }
+      }, 700);
+      
+      // Check saved session
+      const savedUser = localStorage.getItem('sif_session');
+      if (savedUser && !isLocked) {
+        try {
+          const user = JSON.parse(savedUser);
+          loginSuccess(user);
+          console.log(`✅ Session restored for ${user.name}`);
+        } catch (e) {
+          console.error("Session restore error:", e);
+          localStorage.removeItem('sif_session');
+        }
+      }
+      
+      console.log("✅ DREAM OS initialized successfully");
+    });
+    // ================= SLIDER LOGIC =================
+    function startSlideRotation() {
+      const slides = document.querySelectorAll('.slide');
+      let currentSlide = 0;
+      
+      setInterval(() => {
+        slides.forEach(slide => slide.classList.remove('active'));
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+      }, 7000);
+      
+      console.log("✅ Smart Slider started");
+    }
+
+    // ================= FIXED PASSWORD TOGGLE SYSTEM =================
+    function initPasswordToggle() {
+      console.log("🔧 Initializing Password Toggle System...");
+      
+      const eyeToggle = document.getElementById('eyeToggle');
+      const passwordInput = document.getElementById('masterInput');
+      
+      if (!eyeToggle || !passwordInput) {
+        console.warn("⚠️ Password toggle elements not found. Retrying...");
+        setTimeout(initPasswordToggle, 300);
+        return;
+      }
+      
+      // Clean up any existing event listeners
+      const newEyeToggle = eyeToggle.cloneNode(true);
+      eyeToggle.parentNode.replaceChild(newEyeToggle, eyeToggle);
+      
+      // Add click event listener
+      newEyeToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        
+        console.log("👁️ Password toggle clicked");
+        
+        if (passwordInput.type === 'password') {
+          // Show password
+          passwordInput.type = 'text';
+          passwordInput.style.letterSpacing = 'normal';
+          passwordInput.style.textAlign = 'left';
+          newEyeToggle.innerHTML = '👁️‍🗨️'; // Open eye
+          newEyeToggle.style.color = '#4ade80';
+          console.log("[SHOW PASSWORD] Password visible");
+        } else {
+          // Hide password
+          passwordInput.type = 'password';          passwordInput.style.letterSpacing = '4px';
+          passwordInput.style.textAlign = 'center';
+          newEyeToggle.innerHTML = '👁️'; // Closed eye
+          newEyeToggle.style.color = 'var(--gold)';
+          console.log("[HIDE PASSWORD] Password hidden");
+        }
+        
+        // Keep focus on input field
+        passwordInput.focus();
+        console.log("✅ Password field focused after toggle");
+      });
+      
+      // Add keyboard support (space/enter to toggle)
+      newEyeToggle.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          newEyeToggle.click();
+        }
+      });
+      
+      console.log("✅ Password Toggle System initialized successfully");
+    }
+
+    // ================= AUTHENTICATION SYSTEM =================
+    function handleEnterKey(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        console.log("⏎ Enter key pressed");
+        handleLogin();
+      }
+    }
+
+    function handleLogin() {
+      if (isLocked) {
+        showNotification('⏰ SISTEM TERKUNCI: Tunggu 5 menit!', 'error');
+        console.log("🔒 Login attempt while system locked");
+        return;
+      }
+
+      const password = document.getElementById('masterInput').value.trim();
+      if (!password) {
+        showNotification('❌ Masukkan password atau gunakan Fingerprint', 'error');
+        console.log("❌ Empty password submission");
+        return;
+      }
+
+      // MASTER KEY BYPASS (Tanpa enkripsi)
+      if (password === SYSTEM_CONFIG.masterKey) {
+        console.log("👑 Master Key detected");
+        loginSuccess({          name: "Master M 😎",
+          role: "admin",
+          icon: "💎"
+        });
+        return;
+      }
+
+      // VALIDASI USER DATABASE (Base64 Encrypted)
+      const userKey = btoa(password);
+      const user = USER_DATABASE[userKey];
+      
+      if (user) {
+        console.log(`✅ Valid user: ${user.name} (${user.role})`);
+        failedAttempts = 0;
+        localStorage.setItem('failed_attempts', '0');
+        loginSuccess(user);
+      } else {
+        console.log(`❌ Invalid password attempt: ${password}`);
+        failedAttempts++;
+        localStorage.setItem('failed_attempts', failedAttempts.toString());
+        
+        // VISUAL FEEDBACK: shake animation
+        const inputContainer = document.querySelector('.pass-input-container');
+        inputContainer.classList.add('shake');
+        setTimeout(() => {
+          inputContainer.classList.remove('shake');
+        }, 500);
+        
+        // AUTO-LOCK SETELAH 3 KALI GAGAL
+        if (failedAttempts >= SYSTEM_CONFIG.maxFailedAttempts) {
+          console.log("🚨 Max failed attempts reached. Locking system.");
+          triggerLockout();
+        } else {
+          showNotification(`❌ Password salah! (Sisa ${SYSTEM_CONFIG.maxFailedAttempts - failedAttempts}x)`, 'error');
+        }
+      }
+    }
+
+    function simulateFingerprint() {
+      console.log("👆 Fingerprint scan initiated");
+      document.getElementById('finger-status').innerText = "🌀 SCANNING BIOMETRIC...";
+      
+      setTimeout(() => {
+        // Only for Redmi Note 9 Pro (Master Device)
+        if (navigator.userAgent.includes('Redmi Note 9 Pro')) {
+          console.log("✅ Redmi Note 9 Pro detected");
+          loginSuccess({
+            name: "Master M 😎",
+            role: "admin",
+            icon: "💎"          });
+          showNotification('✅ Fingerprint Master Terdeteksi!', 'success');
+        } else {
+          console.log("❌ Non-Master device detected");
+          showNotification('❌ Device tidak terdaftar sebagai Master Device', 'error');
+          failedAttempts++;
+          localStorage.setItem('failed_attempts', failedAttempts.toString());
+          
+          if (failedAttempts >= SYSTEM_CONFIG.maxFailedAttempts) {
+            triggerLockout();
+          }
+        }
+      }, 1200);
+    }
+
+    function triggerLockout() {
+      isLocked = true;
+      lockoutUntil = Date.now() + SYSTEM_CONFIG.lockoutDuration;
+      localStorage.setItem('lockout_until', lockoutUntil.toString());
+      
+      document.getElementById('masterInput').disabled = true;
+      document.querySelector('.login-btn').disabled = true;
+      
+      showNotification(`🚫 SISTEM TERKUNCI: ${Math.ceil(SYSTEM_CONFIG.lockoutDuration/60000)} menit cooldown!`, 'error');
+      console.log(`🔒 System locked until ${new Date(lockoutUntil).toLocaleTimeString()}`);
+      
+      // Countdown timer
+      updateLockoutTimer();
+    }
+
+    function updateLockoutTimer() {
+      if (!isLocked) return;
+      
+      const remaining = Math.max(0, lockoutUntil - Date.now());
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      
+      document.getElementById('finger-status').innerText = 
+        `🕐 Sistem terkunci: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+      
+      if (remaining > 0) {
+        setTimeout(updateLockoutTimer, 1000);
+      } else {
+        unlockSystem();
+      }
+    }
+
+    function unlockSystem() {
+      isLocked = false;
+      failedAttempts = 0;      localStorage.removeItem('lockout_until');
+      localStorage.setItem('failed_attempts', '0');
+      
+      document.getElementById('masterInput').disabled = false;
+      document.querySelector('.login-btn').disabled = false;
+      document.getElementById('masterInput').value = '';
+      document.getElementById('finger-status').innerText = "[ SCANNER READY: Listening Mode ]";
+      
+      showNotification('🔓 Sistem kembali aktif', 'success');
+      console.log("✅ System unlocked successfully");
+    }
+
+    function checkLockoutStatus() {
+      const now = Date.now();
+      if (lockoutUntil && now < lockoutUntil) {
+        console.log(`🔒 System is locked until ${new Date(lockoutUntil).toLocaleTimeString()}`);
+        isLocked = true;
+        document.getElementById('masterInput').disabled = true;
+        document.querySelector('.login-btn').disabled = true;
+        updateLockoutTimer();
+      }
+    }
+
+    function loginSuccess(user) {
+      currentUser = user.name;
+      currentRole = user.role;
+      
+      localStorage.setItem('sif_session', JSON.stringify(user));
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      
+      renderIconGrid();
+      showNotification(`✅ Selamat datang di SIF Al-Fikri, ${user.name}!`, 'success');
+      console.log(`✅ Login successful: ${user.name} (${user.role})`);
+    }
+
+    function logout() {
+      console.log("🚪 User logout initiated");
+      localStorage.removeItem('sif_session');
+      location.reload();
+    }
+
+    // ================= ICON GRID RENDERING =================
+    function renderIconGrid() {
+      console.log("📊 Rendering icon grid for role:", currentRole);
+      const grid = document.getElementById('iconGrid');
+      grid.innerHTML = '';
+      
+      ICON_BLUEPRINT.forEach(icon => {
+        const hasAccess = icon.access.includes(currentRole) || currentRole === 'admin';        const card = document.createElement('div');
+        
+        card.className = 'icon-box';
+        if (!hasAccess) {
+          card.setAttribute('disabled', 'true');
+        }
+        
+        card.innerHTML = `
+          <div class="icon-emoji">${icon.emoji}</div>
+          <div class="icon-label">${icon.title}</div>
+        `;
+        
+        if (hasAccess) {
+          card.onclick = () => openModule(icon.id);
+        }
+        
+        grid.appendChild(card);
+      });
+      
+      console.log(`✅ Rendered ${ICON_BLUEPRINT.length} icons`);
+    }
+
+    function openModule(moduleId) {
+      const viewName = viewMap[moduleId];
+      if (!viewName) return;
+      
+      showNotification(`✅ Membuka modul: ${ICON_BLUEPRINT.find(i => i.id === moduleId).title}`, 'info');
+      console.log(`[MODULE] Buka modul ${viewName} (ID: ${moduleId}) oleh ${currentUser}`);
+    }
+
+    // ================= UTILITY FUNCTIONS =================
+    function goTo(page) {
+      console.log(`[NAV] Pindah ke halaman: ${page}`);
+    }
+
+    function showNotification(message, type = 'info') {
+      // Remove existing notifications
+      const existing = document.querySelectorAll('.notification');
+      existing.forEach(el => el.remove());
+      
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: ${type === 'error' ? '#ef4444' : 
+                     type === 'success' ? '#10b981' :                      type === 'info' ? '#3b82f6' : '#f59e0b'};
+        color: white;
+        border-radius: 10px;
+        z-index: 9999;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease;
+        max-width: 400px;
+        word-wrap: break-word;
+      `;
+      
+      const icon = type === 'error' ? '❌' : 
+                  type === 'success' ? '✅' : 
+                  type === 'info' ? 'ℹ️' : '⚠️';
+      
+      notification.innerHTML = `<span style="margin-right:10px;">${icon}</span>${message}`;
+      
+      document.body.appendChild(notification);
+      
+      // Remove notification after 3 seconds
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+          notification.remove();
+          console.log("✅ Notification removed");
+        }, 300);
+      }, 3000);
+      
+      console.log(`[NOTIFICATION] ${type.toUpperCase()}: ${message}`);
+    }
+  </script>
+</body>
+</html>
