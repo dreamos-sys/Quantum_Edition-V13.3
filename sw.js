@@ -8,9 +8,23 @@ self.addEventListener('install', event => {
   );
 });
 
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => 
+      Promise.all(keys.map(key => {
+        if (key !== CACHE_NAME) return caches.delete(key);
+      }))
+    ).then(() => self.clients.claim())
+  );
+});
+
 self.addEventListener('fetch', event => {
-  // Skip API requests
-  if (event.request.url.includes('/api/') || event.request.url.includes('supabase')) {
+  // Skip API requests and external resources
+  if (
+    event.request.url.includes('/api/') || 
+    event.request.url.includes('supabase') ||
+    event.request.url.includes('googleapis')
+  ) {
     return;
   }
   
