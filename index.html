@@ -1,0 +1,92 @@
+function getFieldsForModule(id) {
+    const timestamp = new Date().toLocaleString('id-ID');
+    const common = `<div style="margin-bottom:15px; font-size:0.75rem; color:var(--neuro-green); border-bottom:1px solid var(--glass); padding-bottom:10px;">
+                        🕒 System Time: ${timestamp} | 🔑 Device: ${state.quantumId.substring(0,12)}...
+                    </div>`;
+
+    switch(id) {
+        case 'booking':
+            return common + `
+                <div class="form-group"><label>Nama Unit/Bagian</label><input type="text" id="b_unit" placeholder="Contoh: Tata Usaha / Divisi IT"></div>
+                <div class="form-group"><label>Sarana yang Dipinjam</label>
+                    <select id="b_ruang"><option>Aula Utama</option><option>Ruang Rapat A</option><option>Lab Komputer</option><option>Lapangan</option></select>
+                </div>
+                <div class="form-group"><label>Waktu Mulai</label><input type="datetime-local" id="b_start"></div>
+                <div class="form-group"><label>Waktu Selesai</label><input type="datetime-local" id="b_end"></div>
+                <div class="form-group"><label>Keperluan</label><textarea id="b_note" placeholder="Contoh: Rapat Koordinasi Bulanan"></textarea></div>
+            `;
+
+        case 'k3':
+            return common + `
+                <div class="form-group"><label>Kategori Temuan (Auto-Routing)</label>
+                    <select id="k3_route" onchange="document.getElementById('k3_target').innerText = 'Akan diteruskan ke: ' + this.value.toUpperCase()">
+                        <option value="maintenance">🛠️ Kerusakan Fasilitas (Ke Maintenance)</option>
+                        <option value="security">🛡️ Kehilangan/Keamanan (Ke Sekuriti)</option>
+                        <option value="janitor">🧹 Kebersihan Area (Ke Janitor)</option>
+                    </select>
+                </div>
+                <p id="k3_target" style="font-size:0.7rem; color:var(--gold); margin-top:-10px; margin-bottom:10px;">Akan diteruskan ke: MAINTENANCE</p>
+                <div class="form-group"><label>Lokasi Temuan</label><input type="text" id="k3_loc" placeholder="Misal: Lantai 2 Sayap Barat"></div>
+                <div class="form-group"><label>Foto Bukti</label><input type="file" accept="image/*" capture="camera"></div>
+                <div class="form-group"><label>Level Urgensi</label>
+                    <select id="k3_level"><option>🟢 Normal</option><option>🟡 Segera</option><option>🔴 DARURAT / BAHAYA</option></select>
+                </div>
+            `;
+
+        case 'security':
+            return common + `
+                <div class="form-group"><label>Laporan Shift</label>
+                    <select id="s_shift"><option>Pagi (07:00 - 19:00)</option><option>Malam (19:00 - 07:00)</option></select>
+                </div>
+                <div class="form-group"><label>Daftar Anggota Piket</label><textarea id="s_team" placeholder="Tulis nama anggota yang bertugas..."></textarea></div>
+                <div class="form-group"><label>Hasil Patroli (LHPS)</label><textarea id="s_patrol" style="height:100px;" placeholder="Uraikan kondisi setiap pos kontrol..."></textarea></div>
+                <div class="form-group"><label>Kejadian Menonjol</label><select id="s_incident"><option>NIHIL / AMAN</option><option>Ada Kejadian</option></select></div>
+            `;
+
+        case 'janitor':
+        case 'taman':
+            const area = id === 'janitor' ? 'Indoor/Ruangan' : 'Outdoor/Taman';
+            return common + `
+                <div class="form-group"><label>Area Kerja (${area})</label><input type="text" placeholder="Nama Ruang/Area"></div>
+                <div class="form-group"><label>Ceklis Kebersihan</label>
+                    <div style="font-size:0.8rem; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
+                        <label><input type="checkbox"> Lantai & Sudut Ruang</label><br>
+                        <label><input type="checkbox"> Kaca & Jendela</label><br>
+                        <label><input type="checkbox"> Tempat Sampah</label><br>
+                        <label><input type="checkbox"> Aroma/Wewangian</label>
+                    </div>
+                </div>
+                <div class="form-group"><label>Kondisi Peralatan Kerja</label><select><option>Lengkap & Baik</option><option>Rusak/Perlu Ganti</option></select></div>
+            `;
+
+        case 'alat':
+            return common + `
+                <div class="form-group"><label>Logistik Untuk</label>
+                    <select id="a_cat"><option>Cleaning Service</option><option>Taman/Outdoor</option><option>Maintenance</option></select>
+                </div>
+                <div class="form-group"><label>Nama Barang</label><input type="text" placeholder="Misal: WIPOL / Pupuk NPK"></div>
+                <div class="form-group"><label>Aksi</label>
+                    <select id="a_type"><option value="in">📦 Masuk (Stok Baru/Gudang)</option><option value="out">📤 Keluar (Pemakaian)</option></select>
+                </div>
+                <div class="form-group"><label>Jumlah (Satuan)</label><input type="number" placeholder="Jumlah"></div>
+            `;
+
+        case 'work': // Ruang Kerja Admin (Super User)
+            return `
+                <div style="background:var(--glass); padding:15px; border-radius:15px; border-left:4px solid var(--gold); margin-bottom:20px;">
+                    <h4 style="color:var(--gold)">BEYOND ISO CONTROL PANEL</h4>
+                    <p style="font-size:0.7rem;">Verified Administrator: ${state.user.name}</p>
+                </div>
+                <div class="admin-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <button class="icon-box" style="height:100px;" onclick="alert('Buka Panel Approval Dana')">💰 Pengajuan Dana</button>
+                    <button class="icon-box" style="height:100px;" onclick="alert('Buka Laporan SPJ')">📄 Laporan SPJ</button>
+                    <button class="icon-box" style="height:100px;" onclick="alert('Monitoring User Log')">🕵️ Audit Trail</button>
+                    <button class="icon-box" style="height:100px;" onclick="alert('Eksport Laporan Bulanan')">📥 Export PDF</button>
+                </div>
+            `;
+        
+        // Form lainnya (Maintenance, Asset) mengikuti pola serupa...
+        default:
+            return common + `<div class="form-group"><label>Deskripsi Laporan</label><textarea id="gen_desc"></textarea></div>`;
+    }
+}
